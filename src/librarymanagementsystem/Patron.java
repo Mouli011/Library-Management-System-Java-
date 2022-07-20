@@ -583,6 +583,12 @@ public class Patron extends User implements Lists{
                     continue;
                     
                 }
+                if((patron.userID==userID)&&(patron.bookCount==0))
+                {
+                System.out.println("No Books to Return!!");
+                loopExit=0;
+                continue;
+                }
                 for(Book book:books)
                 {
                     for(Book bookCopy:book.bookCopies)
@@ -600,12 +606,15 @@ public class Patron extends User implements Lists{
                                 patron.borrowedBooks.remove(returnedBook);
                                 bookCopy.bookLocation="";
                                 System.out.println("Book Returned Successfully!!");
+                                loopExit=0;
+                                continue;
                             }
                             else 
                             {
                                 boolean finePayCheck = patron.payFine(patron.fine,userID);
                                 if(finePayCheck)
                                 {
+                                  
                                    bookCopy.returnBookCopy(); 
                                    book.availableCopies++;
                                    patron.bookCount--;
@@ -614,10 +623,14 @@ public class Patron extends User implements Lists{
                                    patron.borrowedBooks.remove(returnedBook);
                                    bookCopy.bookLocation="";
                                    System.out.println("Book Returned Successfully!!");
+                                   loopExit=0;
+                                    continue;
                                 }
                                 else
                                 {
                                     System.out.println("Book Not Returned!!");
+                                    loopExit=0;
+                                    continue;
                                 }
                             }
                         }
@@ -630,14 +643,13 @@ public class Patron extends User implements Lists{
                 {
                     System.out.println("Enter Valid Book ID!!");
                     new Patron().returnBooks(userID);
+                    loopExit=0;
+                    continue;
                     
                 }
                 
             }
-            else if((patron.userID==userID)&&(patron.bookCount==0))
-            {
-                System.out.println("No Books to Return!!");
-            }
+            
         }
         }
     }
@@ -743,11 +755,15 @@ public class Patron extends User implements Lists{
                                    bookCopy.renewBookCopy();
                                    System.out.println("Renewed Return Date: "+Utils.printDate(bookCopy.toBeReturnedDate));
                                    patron.fine = 0;
+                                   loopExit=0;
+                                   continue;
                                    
                                 }
                                 else
                                 {
                                     System.out.println("Book Not Renewed!!!");
+                                    loopExit=0;
+                                    continue;
                                 }
                         }
                     }
@@ -756,15 +772,21 @@ public class Patron extends User implements Lists{
                 {
                     System.out.println("Enter Valid Book ID!!");
                     new Patron().renewBooks(userID);
+                    loopExit=0;
+                    continue;
                 }
             }
             else if((patron.userID==userID)&&(patron.renewalCount<maxRenewalCount)&&(patron.bookCount==0))
             {
                 System.out.println("No Books to Renew!!");
+                loopExit=0;
+                continue;
             }
             else if((patron.userID==userID)&&(patron.renewalCount<=maxRenewalCount))
             {
                 System.out.println("Renewal Limit Reached");
+                loopExit=0;
+                continue;
             }
         }
         }
