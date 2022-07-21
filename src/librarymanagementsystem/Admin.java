@@ -44,8 +44,8 @@ public class Admin extends User{
         int userChoice = 1;
         int signInSuccessfull;
         Admin admin = new Admin("Admin1","9786663130","Male","10-10-1990","pass");
-        admins.add(admin);
-        users.add(admin);
+        Resources.admins.add(admin);
+        Resources.users.add(admin);
         
         
         if((signInSuccessfull=User.signIn())>=0)
@@ -71,13 +71,14 @@ public class Admin extends User{
         final int VIEWPAYMENTS = 6;
         final int EXIT = 0;
         final int VIEWBORROWEDBOOK =7;
+        final int LOSTBOOKS = 8;
         
         
         
             while(LibraryManagementSystem.toBoolean(userChoice))
             {
                 System.out.println("\n\nEnter Appropriate Options:");
-                System.out.println("\t\t1.To View Books\n\t\t2.To Add Books\n\t\t3.To View Patrons\n\t\t4.To Delete Books\n\t\t5.To Add/Update Rules\n\t\t6.To view Payments\n\t\t7.To View Borrowed Books\n\n\t\t0.To Exit");
+                System.out.println("\t\t1.View Books\n\t\t2.Add Books\n\t\t3.View Patrons\n\t\t4.Delete Books\n\t\t5.Add/Update Rules\n\t\t6.view Payments\n\t\t7.View Borrowed Books\n\t\t8.View Lost Books\n\t\t0.Exit");
                 System.out.println("Enter Option: ");
                 
                 userChoice = Utils.getInt();
@@ -90,7 +91,7 @@ public class Admin extends User{
                         break;
                         
                     case ADDBOOKS:
-                        Book.displayAddBookOptions();
+                        Book.displayForAddBooks();
                         Shelf.assignShelf();
                         break;
                         
@@ -126,6 +127,10 @@ public class Admin extends User{
                         Payment.viewPayments();
                         break;
                         
+                    case LOSTBOOKS:
+                        Resources.displayLostBooks();
+                        break;
+                        
                     case EXIT:
                         break;
                         
@@ -144,9 +149,8 @@ public class Admin extends User{
             System.out.println();  
             System.out.println("------------------------------------------------------------------------------------------------------------------------------"); 
         //System.out.println("UserName\t\tPhone Number\t\tGender\t\tDate Of Birth\t\tNumber Of Books Borrowed\t\tFine");
-        for(Patron patron:patrons)
+        for(Patron patron:Resources.patrons)
         {
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------");  
              System.out.printf("%5s %20s %15s %15s %20s %15s %15s %15s", patron.userID, patron.userName,patron.phoneNumber,  patron.gender, patron.mailID,Utils.printDate(patron.dateOfBirth), patron.bookCount,patron.fine);  
             System.out.println();  
             System.out.println("------------------------------------------------------------------------------------------------------------------------------"); 
@@ -163,7 +167,7 @@ public class Admin extends User{
         if(Patron.patronCount!=0)
         {
             System.out.println("Total Number Of Patrons: "+Patron.patronCount);
-        for(Patron patron:patrons)
+        for(Patron patron:Resources.patrons)
         {
             if(patron.bookCount>0)
             {
