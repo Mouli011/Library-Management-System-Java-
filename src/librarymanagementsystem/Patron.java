@@ -9,7 +9,7 @@ import java.lang.*;
  *
  * @author mouli011
  */
-public class Patron extends User implements Lists{
+public class Patron extends User{
     
     static int patronCount =0;
     
@@ -28,7 +28,7 @@ public class Patron extends User implements Lists{
         while(LibraryManagementSystem.toBoolean(userChoice))
         {
         System.out.println("\n\n\nEnter Options:");
-        System.out.println("\t\t1.SIGN UP - If you are a new user\n\t\t2.SIGN IN - If you have a account\n\t\t0.To Exit");
+        System.out.println("\t\t1.SIGN UP - If you are a new user\n\t\t2.SIGN IN - If you have a account\n\t\t0.Exit");
         System.out.println("\nEnter your Choice: ");
         userChoice = this.chosenOption(userChoice);
         }
@@ -106,8 +106,8 @@ public class Patron extends User implements Lists{
        
         userID = User.getUserId();
         
-        patrons.add(this);
-        users.add(this);
+        Resources.patrons.add(this);
+        Resources.users.add(this);
         
         System.out.println("\nSign Up Successful!!\n\nUsername: "+userName+"\nUserID: "+userID);
         patronCount++;
@@ -133,7 +133,7 @@ public class Patron extends User implements Lists{
         final int EXIT=0;        
                 
                 
-        for(User user: users)
+        for(User user: Resources.users)
         {
             if(user.userID==userID)
             {
@@ -147,8 +147,8 @@ public class Patron extends User implements Lists{
         while(LibraryManagementSystem.toBoolean(userChoice))
         {
             System.out.println("\n\nEnter Appropriate Options:");
-            System.out.println("\t\t1.My Profile\n\t\t2.To Search Books\n\t\t3.To Borrow Books\n\t\t4.To Return Books\n\t\t5.To Donate Books\n\t\t6.To View Payments\n\t\t7.To Renew Books\n\t\t8.If Book is Lost");
-            System.out.println("\n\t\t0.To Exit\n\nEnter Your Choice: ");
+            System.out.println("\t\t1.My Profile\n\t\t2.Search Books\n\t\t3.Borrow Books\n\t\t4.Return Books\n\t\t5.Donate Books\n\t\t6.View Payments\n\t\t7.Renew Books\n\t\t8.Book Lost");
+            System.out.println("\n\t\t0.Exit\n\nEnter Your Choice: ");
             
             userChoice = Utils.getInt();
             
@@ -175,14 +175,14 @@ public class Patron extends User implements Lists{
                     break;
                 
                 case DONATEBOOKS:
-                     Book.displayAddBookOptions();
+                     Book.displayForAddBooks();
                      Shelf.assignShelf();
                     break;
                 
                 
                     
                 case VIEWPAYMENT:
-                    for(Patron viewPatron:patrons)
+                    for(Patron viewPatron:Resources.patrons)
                     {
                         if(viewPatron.userID==userID)
                         {
@@ -213,7 +213,7 @@ public class Patron extends User implements Lists{
     
     public void displayPatronProfile(int userID){
         
-        for(Patron patron: patrons)
+        for(Patron patron: Resources.patrons)
         {
             if(patron.userID==userID)
             {
@@ -250,7 +250,7 @@ public class Patron extends User implements Lists{
         while(LibraryManagementSystem.toBoolean(userChoice))
         {
         System.out.println("Enter Appropriate Option: ");
-        System.out.println("\t\t1.To Search By Book Name\n\t\t2.To Search By Author Name\n\t\t3.To Search By Genre\n\t\t0.Exit");
+        System.out.println("\t\t1.Search By Book Name\n\t\t2.Search By Author Name\n\t\t3.Search By Genre\n\t\t0.Main Page");
         System.out.println("Your Option: ");
         userChoice = Utils.getInt();
         switch(userChoice)
@@ -258,7 +258,7 @@ public class Patron extends User implements Lists{
             case SEARCHBYNAME:
                 System.out.println("Enter Book Name: ");
                 bookName = Utils.getString();
-                for(Book book:books)
+                for(Book book:Resources.books)
                 {
                     for(Book bookCopy:book.bookCopies)
                     {
@@ -268,7 +268,7 @@ public class Patron extends User implements Lists{
                         if(bookFound==0)
                         {
                         System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
-                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHER", "GENRE" ,"BOOK LOCATION");  
+                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
                         System.out.println();  
                         System.out.println("------------------------------------------------------------------------------------------------------------------------------------"); 
                         bookCopy.displaySingleBookCopy();
@@ -285,7 +285,7 @@ public class Patron extends User implements Lists{
                if(bookFound==0)
                 {
                 System.out.println("No Books Found!!");
-                userChoice=0;
+                userChoice=1;
                 continue;
                 }
                 
@@ -293,7 +293,7 @@ public class Patron extends User implements Lists{
             case SEARCHBYAUTHOR:
                 System.out.println("Enter Author Name: ");
                 String author = Utils.getString();
-                for(Book book:books)
+                for(Book book:Resources.books)
                 {
                     for(Book bookCopy:book.bookCopies)
                     {
@@ -303,7 +303,7 @@ public class Patron extends User implements Lists{
                         if(bookFound==0)
                         {
                         System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
-                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHER", "GENRE" ,"BOOK LOCATION");  
+                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
                         System.out.println();  
                         System.out.println("------------------------------------------------------------------------------------------------------------------------------------"); 
                         bookCopy.displaySingleBookCopy();
@@ -320,18 +320,18 @@ public class Patron extends User implements Lists{
                if(bookFound==0)
                 {
                 System.out.println("No Authors Found!!");
-                userChoice=0;
+                userChoice=1;
                 continue;
                 }
                 
                 break;
             case SEARCHBYGENRE:
                 System.out.println("Select the Appropriate Genre: ");
-                System.out.println("\t\t0.ACTION\n\t\t1.DRAMA\n\t\t2.SCIENCE FICTION\n\t\t3.ROMANCE\n\t\t4.CRIME\n\t\t5.THRILLER\n\t\t6.HORROR\n\t\t7.DOCUMENTARY\n\t\t8.NOVEL\n\t\t9.HISTORY\n\t\t10.OTHER");
+                System.out.println("\t\t1.ACTION\n\t\t2.DRAMA\n\t\t3.SCIENCE FICTION\n\t\t4.ROMANCE\n\t\t5.CRIME\n\t\t6.THRILLER\n\t\t7.HORROR\n\t\t8.DOCUMENTARY\n\t\t9.NOVEL\n\t\t10.HISTORY\n\t\t11.OTHER");
                 System.out.println("Enter Option: ");
                 int genreReference = Utils.getInt();
                 String genre = Utils.assignGenre(genreReference);
-                for(Book book:books)
+                for(Book book:Resources.books)
                 {
                     for(Book bookCopy:book.bookCopies)
                     {
@@ -341,7 +341,7 @@ public class Patron extends User implements Lists{
                         if(bookFound==0)
                         {
                         System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
-                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHER", "GENRE" ,"BOOK LOCATION");  
+                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
                         System.out.println();  
                         System.out.println("------------------------------------------------------------------------------------------------------------------------------------"); 
                         bookCopy.displaySingleBookCopy();
@@ -358,7 +358,7 @@ public class Patron extends User implements Lists{
                if(bookFound==0)
                 {
                 System.out.println("No Books Found in this Genre!!");
-                userChoice=0;
+                userChoice=1;
                 continue;
                 }
                 
@@ -373,10 +373,10 @@ public class Patron extends User implements Lists{
         bookFound=0;
         if(userChoice>0)
         {
-        System.out.println("Enter Options:\n\t\t1.To Borrow Book\n\t\t0.To Exit");
+        System.out.println("Enter Options:\n\t\t1.Borrow Book\n\t\t2.Search Page\n\t\t0.Main Page");
         System.out.println("Enter Your Choice: ");
         userChoice = Utils.getInt();
-        while((userChoice!=0)&&(userChoice!=1))
+        while((userChoice!=0)&&(userChoice!=1)&&(userChoice!=2))
         {
            System.out.println("Enter Vaild Option:");
            userChoice = Utils.getInt();
@@ -396,12 +396,12 @@ public class Patron extends User implements Lists{
         if(borrowRequest==0)
         {
             System.out.println("-----------------------------------------------------------------------------------------------------------------");  
-            System.out.printf("%5s %20s %20s %20s %20s", "BOOK NO", "BOOK NAME", "AUTHOR", "PUBLISHER", "AVAILABLE COPIES");  
+            System.out.printf("%5s %20s %20s %20s %20s", "BOOK NO", "BOOK NAME", "AUTHOR", "PUBLISHED IN", "AVAILABLE COPIES");  
             System.out.println();  
             System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
             //System.out.println("Book No\t\tBook Name\t\tAuthor\t\tPublisher\t\tAvaialable Copies\t\t");
 
-                for(Book book:books)
+                for(Book book:Resources.books)
                 {
                     if(book.availableCopies>0)
                     {
@@ -415,7 +415,7 @@ public class Patron extends User implements Lists{
                 {
                 System.out.println("Enter the Number of the Book which you need from the above List: ");
                 bookNo = Utils.getInt();
-                for(Patron patron: patrons)
+                for(Patron patron: Resources.patrons)
                 {
             if(((patron.userID)==userID)&&(patron.bookCount<=1)&&(patron.fine==0))
             {
@@ -461,17 +461,20 @@ public class Patron extends User implements Lists{
     
     public void borrowBooks(int userID,int borrowRequest)
     {
+        int loopExit=1;
+        while(LibraryManagementSystem.toBoolean((loopExit)))
+        {
         int bookID;
         int availableBooks=0;
         
         if(borrowRequest==0)
         {
              System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
-             System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHER", "GENRE" ,"BOOK LOCATION");  
+             System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
             System.out.println();  
              System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
 
-                for(Book book:books)
+                for(Book book:Resources.books)
                 {
                     if(book.availableCopies>0)
                     {
@@ -489,9 +492,11 @@ public class Patron extends User implements Lists{
         }
                 if((availableBooks>0)||(borrowRequest==1))
                 {
-                System.out.println("Enter the ID of the Book which you need from the above List: ");
+                System.out.println("Enter the ID of the Book which you need from the above List: \n\nOr Enter 0 to Main Page: \n\n");
                 bookID = Utils.getInt();
-                for(Patron patron: patrons)
+                if(bookID>0)
+                {
+                for(Patron patron: Resources.patrons)
                 {
             if(((patron.userID)==userID)&&(patron.bookCount<=1)&&(patron.fine==0))
             {
@@ -510,6 +515,8 @@ public class Patron extends User implements Lists{
                 }
                 
                 }
+                loopExit=0;
+                continue;
                 }
                 
                 
@@ -518,25 +525,38 @@ public class Patron extends User implements Lists{
             {
                 System.out.println("Return Books and Pay Fine to Borrow new Books");
                 patron.returnBooks(userID );
+                loopExit=0;
+                continue;
             }
             else if(((patron.userID)==userID)&&(patron.bookCount==2)&&(patron.fine>=0))
             {
                 System.out.println("Return Books to Borrow new Books");
                 patron.returnBooks(userID );
+                loopExit=0;
+                continue;
             }
+                }
+                }
+                else
+                {
+                    loopExit=0;
+                    continue;
                 }
                 }
                 else if((availableBooks==0)&&(borrowRequest==0))
             {
                 System.out.println("No Books Available!!");
+                loopExit=0;
+                continue;
             }
             
             
         
     }
+    }
     /*public void addBookToBorrowedBooks(int bookNo,int bookID)
     {
-        for(Book book:books)
+        for(Book book:Resources.books)
                 {
                     if(book.bookNo==bookNo)
                     {
@@ -551,33 +571,33 @@ public class Patron extends User implements Lists{
     public void displayBorrowedBooks()
     {
         System.out.println("------------------------------------------------------------------------------------------------------------------------------");  
-        System.out.printf("%5s %20s %15s %20s %20s %25s %25s ", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHER", "BORROWED DATE","RETURN DATE DUE");  
+        System.out.printf("%5s %20s %15s %20s %20s %25s %25s ", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "BORROWED DATE","RETURN DATE DUE");  
         System.out.println();  
         System.out.println("------------------------------------------------------------------------------------------------------------------------------");  
         //System.out.println("Book ID\t\tBook Name\t\tBook No\t\tAuthor\t\tPublisher\t\tBorrowedDate\t\tLast Date To Return the Book");
         for(Book borrowedBook:borrowedBooks)
         {
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------");  
-        System.out.printf("%5s %20s %15s %20s %20s %25s %25s ",borrowedBook.bookID, borrowedBook.bookName,borrowedBook.bookNo, borrowedBook.author, borrowedBook.publisher, Utils.printDate(borrowedBook.borrowedDate),Utils.printDate(borrowedBook.toBeReturnedDate));  
+        System.out.printf("%5s %20s %15s %20s %20s %25s %25s ",borrowedBook.bookID, borrowedBook.bookName,borrowedBook.bookNo, borrowedBook.author, borrowedBook.publishedIn, Utils.printDate(borrowedBook.borrowedDate),Utils.printDate(borrowedBook.toBeReturnedDate));  
         System.out.println();  
         System.out.println("------------------------------------------------------------------------------------------------------------------------------"); 
-         //System.out.println(borrowedBook.bookID+"\t\t"+borrowedBook.bookName+"\t\t"+borrowedBook.bookNo+"\t\t\t"+borrowedBook.author+"\t\t"+borrowedBook.publisher+"\t\t"+Utils.printDate(borrowedBook.borrowedDate)+"\t\t"+Utils.printDate(borrowedBook.toBeReturnedDate));   
+         //System.out.println(borrowedBook.bookID+"\t\t"+borrowedBook.bookName+"\t\t"+borrowedBook.bookNo+"\t\t\t"+borrowedBook.author+"\t\t"+borrowedBook.publishedIn+"\t\t"+Utils.printDate(borrowedBook.borrowedDate)+"\t\t"+Utils.printDate(borrowedBook.toBeReturnedDate));   
         }
     }
     public void returnBooks(int userID)
     {
         int loopExit =1;
+        int confirm;
+         for(Patron patron:Resources.patrons)
+        {
+            if((patron.userID==userID)&&(patron.bookCount>0))
+            {
         while(LibraryManagementSystem.toBoolean(loopExit))
         {
         Book returnedBook = new Book();
         int bookID;
         int bookMatch =0;
-        for(Patron patron:patrons)
-        {
-            if((patron.userID==userID)&&(patron.bookCount>0))
-            {
                 patron.displayBorrowedBooks();
-                System.out.println("Enter the ID of the book to be returned: \n\t\t0.To Main Page\n");
+                System.out.println("Enter the ID of the book to be returned: \n\t\t0.Main Page\n");
                 bookID = Utils.getInt();
                 if(bookID==0)
                 {
@@ -585,13 +605,8 @@ public class Patron extends User implements Lists{
                     continue;
                     
                 }
-                if((patron.userID==userID)&&(patron.bookCount==0))
-                {
-                System.out.println("No Books to Return!!");
-                loopExit=0;
-                continue;
-                }
-                for(Book book:books)
+                
+                for(Book book:Resources.books)
                 {
                     for(Book bookCopy:book.bookCopies)
                     {
@@ -601,6 +616,21 @@ public class Patron extends User implements Lists{
                             bookMatch++;
                             if(patron.fine==0)
                             {
+                                System.out.println("Confirm The Return Of The Book\n\t\t1.Yes\n\t\t0.No");
+                                confirm = Utils.getInt();
+                                while((confirm!=0)&&(confirm!=1))
+                                {
+                                    System.out.println("Enter Valid Option: ");
+                                    confirm = Utils.getInt();
+                                }
+                                if(confirm==0)
+                                {
+                                    System.out.println("Book Not Returned!!");
+                                    loopExit =0;
+                                    continue;
+                                }
+                                if(confirm==1)
+                                {
                                 bookCopy.returnBookCopy();
                                 book.availableCopies++;
                                 patron.bookCount--;
@@ -610,9 +640,26 @@ public class Patron extends User implements Lists{
                                 System.out.println("Book Returned Successfully!!");
                                 loopExit=0;
                                 continue;
+                                }
+                                
                             }
                             else 
                             {
+                                System.out.println("Confirm The Return Of The Book\n\t\t1.Yes\n\t\t0.No");
+                                confirm = Utils.getInt();
+                                while((confirm!=0)&&(confirm!=1))
+                                {
+                                    System.out.println("Enter Valid Option: ");
+                                    confirm = Utils.getInt();
+                                }
+                                if(confirm==0)
+                                {
+                                    System.out.println("Book Not Returned!!");
+                                    loopExit =0;
+                                    continue;
+                                }
+                                if(confirm==1)
+                                {
                                 boolean finePayCheck = patron.payFine(patron.fine,userID);
                                 if(finePayCheck)
                                 {
@@ -635,6 +682,7 @@ public class Patron extends User implements Lists{
                                     continue;
                                 }
                             }
+                            }
                         }
                       
                     }
@@ -653,6 +701,12 @@ public class Patron extends User implements Lists{
             }
             
         }
+            else if((patron.userID==userID)&&(patron.bookCount==0))
+                {
+                System.out.println("No Books to Return!!");
+                loopExit=0;
+                continue;
+                }
         }
     }
     public boolean payFine(double fine,int userID)
@@ -678,13 +732,13 @@ public class Patron extends User implements Lists{
                 paymentResult = payment.performPayment(this);
                 if(paymentResult)
                 {
-                    for(Patron patron:patrons)
+                    for(Patron patron:Resources.patrons)
                     {
                         if(patron.userID==userID)
                         {
                         payment.paymentPurpose ="Fine for Late Return";
                         patron.individualPatronPayments.add(payment);
-                        payments.add(payment);
+                        Resources.payments.add(payment);
                         }
                     }
                     
@@ -704,6 +758,7 @@ public class Patron extends User implements Lists{
     }
     public void displayIndividualPatronPayment(int userID)
     {
+        System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
         System.out.format("%5s %20s %15s %25s %25s", "PAYMENT ID", "PAYMENT DATE", "AMOUNT PAID","PAYMENT PLATFORM", "PAYMENT PURPOSE");  
         System.out.println();  
         System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
@@ -724,28 +779,46 @@ public class Patron extends User implements Lists{
     public void renewBooks(int userID)
     {
         int loopExit=1;
-        while(LibraryManagementSystem.toBoolean(loopExit))
-        {
+        
         int bookID;
         int bookMatch=0;
-        for(Patron patron:patrons)
+        int confirm;
+        for(Patron patron:Resources.patrons)
         {
+            while(LibraryManagementSystem.toBoolean(loopExit))
+            {
             if((patron.userID==userID)&&(patron.renewalCount<maxRenewalCount)&&(patron.bookCount>0))
             {
+                
                 patron.displayBorrowedBooks();
-                System.out.println("Enter the ID of the book to be renewed: \n\t\t0.To Main Page\n");
+                System.out.println("Enter the ID of the book to be renewed: \n\t\t0.Main Page\n");
                 bookID = Utils.getInt();
                 if(bookID==0)
                 {
                     loopExit=0;
                     continue;
                 }
-                for(Book book:books)
+                for(Book book:Resources.books)
                 {
                     for(Book bookCopy:patron.borrowedBooks)
                     {
                         if(bookCopy.bookID==bookID)
                         {
+                            System.out.println("Confirm The Renewal Of The Book\n\t\t1.Yes\n\t\t0.No");
+                                confirm = Utils.getInt();
+                                while((confirm!=0)&&(confirm!=1))
+                                {
+                                    System.out.println("Enter Valid Option: ");
+                                    confirm = Utils.getInt();
+                                }
+                                if(confirm==0)
+                                {
+                                    System.out.println("Book Not Renewed!!");
+                                    loopExit =0;
+                                    continue;
+                                }
+                                if(confirm==1)
+                                {   
                             patron.fine = patron.checkFine();
                             bookMatch++;
                             patron.fine = patron.fine + renewalFee;
@@ -767,17 +840,13 @@ public class Patron extends User implements Lists{
                                     loopExit=0;
                                     continue;
                                 }
+                                }
+                        
                         }
                     }
                 }
-                if(bookMatch==0)
-                {
-                    System.out.println("Enter Valid Book ID!!");
-                    new Patron().renewBooks(userID);
-                    loopExit=0;
-                    continue;
-                }
-            }
+               }
+                
             else if((patron.userID==userID)&&(patron.renewalCount<maxRenewalCount)&&(patron.bookCount==0))
             {
                 System.out.println("No Books to Renew!!");
@@ -790,7 +859,18 @@ public class Patron extends User implements Lists{
                 loopExit=0;
                 continue;
             }
+                /*if(bookMatch==0)
+                {
+                    System.out.print("IN BOOK MATCH0");
+                    System.out.println("Enter Valid Book ID!!");
+                    new Patron().renewBooks(userID);
+                    System.out.print("IN BOOK MATCH0");
+                    loopExit=0;
+                    continue;
+                }*/
+            System.out.println("Enter Valid Book ID!!");
         }
+        
         }
     }
      public boolean payRenewal(double fine)
@@ -815,7 +895,7 @@ public class Patron extends User implements Lists{
                 paymentResult = payment.performPayment(this);
                 if(paymentResult==true)
                 {
-                    for(Patron patron:patrons)
+                    for(Patron patron:Resources.patrons)
                     {
                         if(patron.userID==userID)
                         {
@@ -823,7 +903,7 @@ public class Patron extends User implements Lists{
                         payment.userID = patron.userID;
                         payment.userName = patron.userName;
                         patron.individualPatronPayments.add(payment);
-                        payments.add(payment);
+                        Resources.payments.add(payment);
                         }
                     }
                     
@@ -854,7 +934,7 @@ public class Patron extends User implements Lists{
      {
          if(Book.bookCount!=0)
          {
-         for(Patron patron:patrons)
+         for(Patron patron:Resources.patrons)
          {
              if((patron.userID==userID)&&(patron.bookCount>0))
              {
@@ -879,12 +959,32 @@ public class Patron extends User implements Lists{
     }
      public void bookLostAction(int bookID)
      {
+         int loopExit=1;
+         int confirm;
+         while(LibraryManagementSystem.toBoolean(loopExit))
+         {
          Book returnedBook = new Book();
          int bookMatch =0;
          for(Book bookLost:this.borrowedBooks)
          {
              if(bookLost.bookID==bookID)
              {
+                 System.out.println("Confirm To Proceed Further:\n\t\t1.Yes\n\t\t0.No");
+                 confirm = Utils.getInt();
+                 while((confirm!=0)&&(confirm!=1))
+                 {
+                  System.out.println("Enter Valid Option: ");
+                  confirm = Utils.getInt();
+                 }
+                 if(confirm==0)
+                 {
+                    System.out.println("Fine Not Paid!!");
+                    loopExit =0;
+                    continue;
+                 }
+                 if(confirm==1)
+                 {   
+                 
                  this.fine = this.checkFine();
                  this.fine = this.fine + bookLost.bookPrice;
                  bookMatch++;
@@ -893,33 +993,50 @@ public class Patron extends User implements Lists{
                  {
                             //bookLost.returnBookCopy(); 
                             returnedBook =bookLost;
-                            for(Book book:books)
+                            for(Book book:Resources.books)
                             {
                                 if(book.bookNo==bookLost.bookNo)
                                         book.totalCopies--;
+                                        Resources.lostBooks.add(returnedBook);
+                                        Resources.lostBookCount++;
                                         book.bookCopies.remove(returnedBook);
                             }
                             this.bookCount--;
                             this.fine = 0;
                             
                             System.out.println("Fine Paid!!");
+                            loopExit=0;
+                            continue;
                             }
                 else
                 {
                             System.out.println("Fine Not Paid!!");
+                            loopExit=0;
+                            continue;
                 }
-                 
+             }
              }
              
                  
          }
          this.borrowedBooks.remove(returnedBook);
          
-         if(bookMatch==0)
+         if((bookMatch==0)&&(loopExit!=0))
          {
-             System.out.println("\n\nEnter Proper Book ID!!\n\n");
+             System.out.println("\n\nEnter Proper Book ID!!\n\nEnter Options:\n\t\t1.Lost Book\n\t\t0.Main Page");
+             loopExit = Utils.getInt();
+             while((loopExit!=0)&&(loopExit!=1))
+             {
+                 System.out.println("Enter Valid Option!!");
+                 loopExit = Utils.getInt();
+             }
+             if(loopExit==1)
+             {
              Patron.bookLostOptionDisplay(this.userID);
+             loopExit=0;
+             }
          }
+     }
      }
      
      public boolean payBookLostFine(double fine,double bookPrice)
@@ -944,7 +1061,7 @@ public class Patron extends User implements Lists{
                 paymentResult = payment.performPayment(this);
                 if(paymentResult==true)
                 {
-                    for(Patron patron:patrons)
+                    for(Patron patron:Resources.patrons)
                     {
                         if(patron.userID==userID)
                         {
@@ -954,7 +1071,7 @@ public class Patron extends User implements Lists{
                         patron.individualPatronPayments.add(payment);
                         payment.userID = patron.userID;
                         payment.userName = patron.userName;
-                        payments.add(payment);
+                        Resources.payments.add(payment);
                         }
                     }
                     
