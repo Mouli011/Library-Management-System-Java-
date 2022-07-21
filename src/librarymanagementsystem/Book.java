@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 
 
-public class Book extends Rules implements Lists{
+public class Book extends Rules{
     
     static int bookCount = 0;
     
@@ -26,7 +26,7 @@ public class Book extends Rules implements Lists{
     static int bookIDReference=1;
     int bookID;//unique for every books
     String author;
-    String publisher;
+    String publishedIn;
     int availableCopies;
     int genreReference; 
     String genre;
@@ -39,20 +39,27 @@ public class Book extends Rules implements Lists{
     
     
     
-    public Book addBook()
+    public Book addBook(int bookNo)
     {
-            System.out.println("\n\nEnter Book Number: ");
-            bookNo=Utils.getInt();
+            this.bookNo = bookNo;
             System.out.println("Enter Book Name: ");
             bookName = Utils.getString();
+            bookName = Utils.checkNotNull(bookName);
+            
             System.out.println("Enter Author: ");
             author = Utils.getString();
-            System.out.println("Enter Publisher: ");
-            publisher = Utils.getString();
+            author = Utils.checkNotNull(author);
+            
+            System.out.println("Enter Published Year: ");
+            publishedIn = Utils.getString();
+            publishedIn = Utils.checkNotNull(publishedIn);
+            publishedIn = Utils.checkYear(publishedIn);
+            publishedIn = Utils.checkNotNull(publishedIn);
+            
             System.out.println("Enter Total Copies: ");
             totalCopies = Utils.getInt();
             System.out.println("Enter Genre: ");
-            System.out.println("\t\t0.ACTION\n\t\t1.DRAMA\n\t\t2.SCIENCE FICTION\n\t\t3.ROMANCE\n\t\t4.CRIME\n\t\t5.THRILLER\n\t\t6.HORROR\n\t\t7.DOCUMENTARY\n\t\t8.NOVEL\n\t\t9.HISTORY\n\t\t10.OTHER");
+            System.out.println("\t\t1.ACTION\n\t\t2.DRAMA\n\t\t3.SCIENCE FICTION\n\t\t4.ROMANCE\n\t\t5.CRIME\n\t\t6.THRILLER\n\t\t7.HORROR\n\t\t8.DOCUMENTARY\n\t\t9.NOVEL\n\t\t10.HISTORY\n\t\t11.OTHER");
             genreReference = Utils.getInt();
             genre = Utils.assignGenre(genreReference);
             System.out.println("Enter Book Price: ");
@@ -62,7 +69,7 @@ public class Book extends Rules implements Lists{
             for(int i=0;i<totalCopies;i++)
             {
                 book = new Book();
-                book.copyContents(bookNo,bookName,author,publisher,bookPrice,genre);
+                book.copyContents(bookNo,bookName,author,publishedIn,bookPrice,genre);
                 bookCopies.add(book);
                 
             }
@@ -74,12 +81,12 @@ public class Book extends Rules implements Lists{
         return this;
     }
     
-    public void copyContents(int bookNo,String bookName,String author,String publisher,double bookPrice,String genre)
+    public void copyContents(int bookNo,String bookName,String author,String publishedIn,double bookPrice,String genre)
     {
      this.bookNo=bookNo;
      this.bookName=bookName;
      this.author=author;
-     this.publisher=publisher;
+     this.publishedIn=publishedIn;
      this.bookPrice = bookPrice;
      this.genre = genre;
      
@@ -109,7 +116,7 @@ public class Book extends Rules implements Lists{
         {
          book.viewBooks();
         int userChoice;
-        System.out.println("\n\nEnter Option\n\t\t1.To view copies of the book\n\t\t0.To Main Page: ");
+        System.out.println("\n\nEnter Option\n\t\t1.View copies of the book\n\t\t0.Main Page: ");
         userChoice = Utils.getInt();
         if(userChoice==1)
         {
@@ -133,18 +140,18 @@ public class Book extends Rules implements Lists{
     public void viewBooks()
     {
        
-        System.out.println("-----------------------------------------------------------------------------------------------------------------");  
-        System.out.printf("%5s %20s %20s %20s %15s %15s", "BOOK NO", "BOOK NAME", "AUTHOR", "PUBLISHER", "TOTAL COPIES", "AVAILABLE COPIES");  
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");  
+        System.out.printf("%5s %20s %20s %20s %20S %20s %20s", "BOOK NO", "BOOK NAME", "AUTHOR", "PUBLISHED IN","GENRE" , "TOTAL COPIES", "AVAILABLE COPIES");  
 
         System.out.println();  
-        System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");  
         //System.out.println("Book No\t\tBook Name\t\tAuthor\t\tPublisher\t\tTotal Copies\t\tAvailable Copies");
-        for(Book book:books)
+        for(Book book:Resources.books)
         {
-            System.out.format("%5s %20s %20s %20s %15s %15s", book.bookNo, book.bookName, book.author,book.publisher, book.totalCopies, book.availableCopies);  
+            System.out.format("%5s %20s %20s %20s %22s %15s %15s", book.bookNo, book.bookName, book.author,book.publishedIn, book.genre, book.totalCopies, book.availableCopies);  
             System.out.println();  
-            System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
-            //System.out.println(book.bookNo+"\t\t   "+book.bookName+"\t\t   "+book.author+"\t\t"+book.publisher+"\t\t   "+book.totalCopies+"\t\t\t   "+book.availableCopies+"\t\t");
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");  
+            //System.out.println(book.bookNo+"\t\t   "+book.bookName+"\t\t   "+book.author+"\t\t"+book.publishedIn+"\t\t   "+book.totalCopies+"\t\t\t   "+book.availableCopies+"\t\t");
         }
         
         
@@ -161,21 +168,21 @@ public class Book extends Rules implements Lists{
         int bookMatch = 0;
         
        
-        for(Book book:books)
+        for(Book book:Resources.books)
         {
             if(book.bookNo==bookNo&&(book.availableCopies>0))
             {
              bookMatch++;
-             System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
-             System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHER", "AVAILABILITY","BOOK LOCATION");  
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");  
+             System.out.printf("%5s %20s %15s %20s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"AVAILABILITY","BOOK LOCATION");  
             System.out.println();  
-             System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");  
              //System.out.println("Book ID\t\tBook Name\t\tBook No\t\tAuthor\t\tPublisher\t\tAvailability");
              for(Book bookCopy:book.bookCopies){
-             System.out.printf("%5s %20s %15s %20s %20s %15s %20s", bookCopy.bookID, bookCopy.bookName,bookCopy.bookNo, bookCopy.author, bookCopy.publisher,bookCopy.isAvailable,bookCopy.bookLocation);  
+             System.out.printf("%5s %20s %15s %20s %20s %22s %15s %15s", bookCopy.bookID, bookCopy.bookName,bookCopy.bookNo, bookCopy.author, bookCopy.publishedIn, bookCopy.genre, bookCopy.isAvailable,Shelf.getBookPosition(bookCopy.bookID));  
             System.out.println();  
-             System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
-            //System.out.println(bookCopy.bookID+"\t\t"+bookCopy.bookName+"\t\t"+bookCopy.bookNo+"\t\t\t"+bookCopy.author+"\t\t"+bookCopy.publisher+"\t\t"+bookCopy.isAvailable);
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");  
+            //System.out.println(bookCopy.bookID+"\t\t"+bookCopy.bookName+"\t\t"+bookCopy.bookNo+"\t\t\t"+bookCopy.author+"\t\t"+bookCopy.publishedIn+"\t\t"+bookCopy.isAvailable);
              }
              
             }
@@ -198,7 +205,7 @@ public class Book extends Rules implements Lists{
     public void displaySearchResult()
     {
         System.out.println("-----------------------------------------------------------------------------------------------------------------");  
-        System.out.printf("%5s %20s %20s %20s %20s", "BOOK NO", "BOOK NAME", "AUTHOR", "PUBLISHER", "AVAILABLE COPIES");  
+        System.out.printf("%5s %20s %20s %20s %20s", "BOOK NO", "BOOK NAME", "AUTHOR", "PUBLISHED IN", "AVAILABLE COPIES");  
         System.out.println();  
         System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
         //System.out.println("Book No\t\tBook Name\t\tAuthor\t\tPublisher\t\tAvailable Copies\t\t");
@@ -206,17 +213,17 @@ public class Book extends Rules implements Lists{
     }
     public void displaySingleBook()
     {
-        System.out.format("%5s %20s %20s %20s %20s", bookNo, bookName, author,publisher,availableCopies);  
+        System.out.format("%5s %20s %20s %20s %20s", bookNo, bookName, author,publishedIn,availableCopies);  
         System.out.println();  
         System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
-        //System.out.println(bookNo+"\t\t\t"+bookName+"\t\t"+author+"\t\t"+publisher+"\t\t"+availableCopies+"\t\t");
+        //System.out.println(bookNo+"\t\t\t"+bookName+"\t\t"+author+"\t\t"+publishedIn+"\t\t"+availableCopies+"\t\t");
     }
     /*public static Book assignBook(int bookNo,ArrayList<Book> borrowedBooks)
     {
         int bookMatch=0;
         if(bookCount!=0)
         {
-        for(Book book:books)
+        for(Book book:Resources.books)
         {
             if((book.bookNo==bookNo)&&(book.availableCopies!=0))
             {
@@ -253,7 +260,7 @@ public class Book extends Rules implements Lists{
     public Book assignBookCopy(int bookID)
     {
         int bookMatch=0;
-        for(Book book:books)
+        for(Book book:Resources.books)
         {
         for(Book bookCopy:book.bookCopies)
         {
@@ -278,7 +285,7 @@ public class Book extends Rules implements Lists{
         }
         if(bookMatch==0)
         {
-            System.out.println("Enter Valid Book ID:");
+            System.out.println("Enter Valid Book ID: ");
             bookID = Utils.getInt();
             Book addedBook = new Book();
             addedBook=addedBook.assignBookCopy(bookID);
@@ -362,6 +369,7 @@ public class Book extends Rules implements Lists{
     {
         int deleteCount = 0;
         int userChoice = 1;
+        int confirm;
  
         while(LibraryManagementSystem.toBoolean(userChoice))
         {
@@ -370,8 +378,13 @@ public class Book extends Rules implements Lists{
         Book book = new Book();
         book.viewBooks();
        
-        System.out.println("\n\nEnter Option\n\t\t1.To view copies of the book\n\t\t2.To Delete a Whole Book \n\t\t0.To Main Page");
+        System.out.println("\n\nEnter Option\n\t\t1.View copies of the book\n\t\t2.Delete a Whole Book \n\t\t0.Main Page");
         userChoice = Utils.getInt();
+        while((userChoice!=0)&&(userChoice!=1)&&(userChoice!=2))
+        {
+            System.out.println("Enter Valid Option!!");
+            userChoice = Utils.getInt();
+        }
         if(userChoice==1)
         {
             book.viewBookCopies();
@@ -391,8 +404,23 @@ public class Book extends Rules implements Lists{
             int bookNo;
             int bookMatch =0;
             bookNo = Utils.getInt();
+            System.out.println("Confirm Deletion:\n\t\t1.Yes\n\t\t0.No");
+            confirm = Utils.getInt();
+            while((confirm!=0)&&(confirm!=1))
+            {
+                  System.out.println("Enter Valid Option: ");
+                  confirm = Utils.getInt();
+            }
+            if(confirm==0)
+            {
+                    System.out.println("Book Not Deleted!!");
+                    userChoice =0;
+                    continue;
+            }
+            if(confirm==1)
+            {   
             Book bookToBeDeleted = new Book();
-            for(Book singleBook:books)
+            for(Book singleBook:Resources.books)
             {
                 if((singleBook.bookNo==bookNo)&&(singleBook.availableCopies==singleBook.totalCopies))
                 {
@@ -407,7 +435,7 @@ public class Book extends Rules implements Lists{
                     bookMatch++;
                 }
             }
-            boolean bookDeleteResult=books.remove(bookToBeDeleted);
+            boolean bookDeleteResult=Resources.books.remove(bookToBeDeleted);
             if(bookDeleteResult)
             {
                 System.out.println("Book with Number: "+bookNo+" is Deleted Successfully!!!");
@@ -417,12 +445,15 @@ public class Book extends Rules implements Lists{
             if(bookMatch==0)
             {
                 System.out.println("Enter Valid Book Number!!\n\n");
+                userChoice=1;
+                continue;
             }
             if(deleteCount==0)
             {
             System.out.println("No Books Deleted!!");
             deleteCount=0;
             }
+        }
             
         }
         
@@ -449,8 +480,22 @@ public class Book extends Rules implements Lists{
                 break;
             }
         }
-        
-        for(Book singlebook:books)
+           System.out.println("Confirm Deletion:\n\t\t1.Yes\n\t\t0.No");
+           confirm = Utils.getInt();
+           while((confirm!=0)&&(confirm!=1))
+            {
+                  System.out.println("Enter Valid Option: ");
+                  confirm = Utils.getInt();
+            }
+            if(confirm==0)
+            {
+                    System.out.println("Book Not Deleted!!");
+                    userChoice =0;
+                    continue;
+            }
+            if(confirm==1)
+            {   
+        for(Book singlebook:Resources.books)
         {
             
             for(Integer ID:bookIDList)
@@ -478,11 +523,11 @@ public class Book extends Rules implements Lists{
 
                 }
             }
-            
+        }
            
             
         }
-        for(Book singleBook:books)
+        for(Book singleBook:Resources.books)
         {
   
             singleBook.bookCopies.removeAll(singleBook.toBeDeletedBooks);
@@ -500,20 +545,17 @@ public class Book extends Rules implements Lists{
             deleteCount=0;
         }       
         }
-        for(Book books:books)
+        for(Book books:Resources.books)
         {
-            book.toBeDeletedBooks.removeAll(book.toBeDeletedBooks);
+            books.toBeDeletedBooks.removeAll(books.toBeDeletedBooks);
         }
         Shelf.reassignShelf(bookNo);
-        System.out.println("Enter 1.To delete more books");
-        System.out.println("Enter 0.To Exit");
+        
+        System.out.println("Enter 1.Delete more books");
+        System.out.println("Enter 0.Main Page");
         System.out.println("Enter appropraite Option: ");
         userChoice = Utils.getInt();  
-        while((userChoice!=0)&&(userChoice!=1))
-        {
-            System.out.println("Enter Valid Option!!");
-            userChoice = Utils.getInt();
-        }
+        
         
         }
         
@@ -525,26 +567,26 @@ public class Book extends Rules implements Lists{
         }
         
     }
-    public static void displayAddBookOptions()
+    /*public static void displayAddBookOptions()
     {
         if(Book.bookCount==0)
         {
             Book bookAdd = new Book();
             bookAdd = bookAdd.addBook();
-            books.add(bookAdd);
+            Resources.books.add(bookAdd);
             Book.bookCount++;
                         
         }
         else
         {
-        System.out.println("Enter\n\t\t1.To Add Books\n\t\t2.To Add Copies\n\t\t0.Exit");
+        System.out.println("Enter\n\t\t1.Add Books\n\t\t2.Add Copies\n\t\t0.Exit");
         int userChoice;
         userChoice=Utils.getInt();
             if(userChoice==1)
             {
                         Book bookAdd = new Book();
                         bookAdd = bookAdd.addBook();
-                        books.add(bookAdd);
+                        Resources.books.add(bookAdd);
                         Book.bookCount++;
                         
             }
@@ -562,26 +604,22 @@ public class Book extends Rules implements Lists{
                 
             }
         }
-    }
-    public static void displayForAddBookCopies()
+    }*/
+    public static void displayForAddBookCopies(int bookNo)
     {
-        new Book().viewBooks();
-        System.out.println("Enter the number of the book to which the copies are to be added: ");
-        int bookNo;
         int bookCopied=0;
-        bookNo= Utils.getInt();
         System.out.println("Enter total copies to be added: ");
         int totalCopiesToBeAdded = Utils.getInt();
         totalCopiesToBeAdded = Utils.isPositive(totalCopiesToBeAdded);
         int bookFound=0;
-        for(Book book:books)
+        for(Book book:Resources.books)
         {
             if(book.bookNo==bookNo)
             {
                 for(int i=0;i<totalCopiesToBeAdded;i++)
             {
                 Book addBook = new Book();
-                addBook.copyContents(book.bookNo,book.bookName,book.author,book.publisher,book.bookPrice,book.genre);
+                addBook.copyContents(book.bookNo,book.bookName,book.author,book.publishedIn,book.bookPrice,book.genre);
                 bookCopied++;
                 book.bookCopies.add(addBook);
                 
@@ -599,17 +637,42 @@ public class Book extends Rules implements Lists{
         {
             System.out.println("No Copies Added!!");
         }
-        else 
-        {
-            System.out.println("No Book Found With Book Number: "+bookNo);
-        }
     }
     
     public void displaySingleBookCopy()
     {
-        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", bookID, bookName,bookNo, author, publisher, genre,Shelf.getBookPosition(bookID));  
+        System.out.printf("%5s %20s %15s %20s %20s %20s %20s", bookID, bookName,bookNo, author, publishedIn, genre,Shelf.getBookPosition(bookID));  
         System.out.println();
-
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------"); 
+    }
+    
+    
+    public static void displayForAddBooks()
+    {
+        System.out.println("\n\nEnter Book Number: ");
+        int bookNo=Utils.getInt();
+        
+        int bookFound=0;
+        
+        for(Book book:Resources.books)
+        {
+            if(book.bookNo==bookNo)
+            {
+                bookFound++;
+            }
+        }
+        
+        if(bookFound==0)
+        {
+            Book bookAdd = new Book();
+            bookAdd = bookAdd.addBook(bookNo);
+            Resources.books.add(bookAdd);
+            Book.bookCount++;
+        }
+        else if(bookFound>0)
+        {
+            Book.displayForAddBookCopies(bookNo);
+        }
     }
     
 }
