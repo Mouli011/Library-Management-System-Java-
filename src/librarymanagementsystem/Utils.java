@@ -319,5 +319,31 @@ public abstract class Utils {
         }
         return 1;
     }*/
-    
+    public static String getGender()
+    {
+        
+        final int MALE = 0;
+        final int FEMALE = 1;
+        
+        System.out.println("\t\t1.Male\n\t\t2.Female");
+        int loopExit=1;
+        while(LibraryManagementSystem.toBoolean(loopExit))
+        {
+        
+        int userChoice = Utils.getInt();
+
+        switch(userChoice)
+        {
+            case MALE:
+                return "MALE";
+            
+            case FEMALE:
+                return "FEMALE";
+            
+            default:
+                System.out.println("Enter Valid Option!!");
+        }
+        }
+        return "";
+    }
 }
