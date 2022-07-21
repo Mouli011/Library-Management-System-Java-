@@ -322,8 +322,8 @@ public abstract class Utils {
     public static String getGender()
     {
         
-        final int MALE = 0;
-        final int FEMALE = 1;
+        final int MALE = 1;
+        final int FEMALE = 2;
         
         System.out.println("\t\t1.Male\n\t\t2.Female");
         int loopExit=1;
