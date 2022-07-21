@@ -10,7 +10,7 @@ import java.io.*;
  *
  * @author mouli011
  */
-public abstract class User  extends Rules implements Lists{
+public abstract class User  extends Rules{
     
      
     
@@ -57,7 +57,7 @@ public abstract class User  extends Rules implements Lists{
     public static boolean passwordMatcher(int userID,String password)
     {
         
-        for(User user: users)
+        for(User user: Resources.users)
         {
             if((user.userID==userID)&&(user.password.equals(password)))
             {
@@ -77,3 +77,4 @@ public abstract class User  extends Rules implements Lists{
     
     
 }
+
