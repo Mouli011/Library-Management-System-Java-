@@ -89,9 +89,11 @@ public class Patron extends User implements Lists{
         phoneNumber = Utils.checkNotNull(phoneNumber);
         phoneNumber = Utils.checkPhoneNumberConstraint(phoneNumber);
         
-        System.out.println("Enter Gender");
-        gender = Utils.getString();
-        gender = Utils.checkNotNull(gender);
+        System.out.println("Enter Gender: ");
+        /*gender = Utils.getString();
+        gender = Utils.checkNotNull(gender);*/
+        gender = Utils.getGender();
+
         System.out.println("Enter Mail ID: ");
         mailID = Utils.getString();
         mailID = Utils.checkNotNull(mailID);
@@ -889,15 +891,17 @@ public class Patron extends User implements Lists{
                  boolean finePayCheck = this.payBookLostFine(this.fine,bookLost.bookPrice);
                  if(finePayCheck)
                  {
-                            bookLost.returnBookCopy(); 
+                            //bookLost.returnBookCopy(); 
+                            returnedBook =bookLost;
                             for(Book book:books)
                             {
                                 if(book.bookNo==bookLost.bookNo)
-                                        book.availableCopies++;
+                                        book.totalCopies--;
+                                        book.bookCopies.remove(returnedBook);
                             }
                             this.bookCount--;
                             this.fine = 0;
-                            returnedBook =bookLost;
+                            
                             System.out.println("Fine Paid!!");
                             }
                 else
@@ -948,6 +952,8 @@ public class Patron extends User implements Lists{
                         payment.userID = patron.userID;
                         payment.userName = patron.userName;
                         patron.individualPatronPayments.add(payment);
+                        payment.userID = patron.userID;
+                        payment.userName = patron.userName;
                         payments.add(payment);
                         }
                     }
