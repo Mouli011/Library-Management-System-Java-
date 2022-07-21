@@ -8,7 +8,7 @@ import java.util.*;
  *
  * @author mouli011
  */
-public abstract class Shelf extends Rules implements Lists{
+public abstract class Shelf extends Rules{
     
     static int[][] allShelfs = new int[12][maximumBookInAShelf];
     static ArrayList<Integer> garage = new ArrayList<>();
@@ -174,16 +174,16 @@ public abstract class Shelf extends Rules implements Lists{
     
     public static void assignShelf()
     {
-        for(Book book:books)
+        for(Book book:Resources.books)
         {
             for(Book bookCopy:book.bookCopies)
             {
-                if((bookCopy.bookLocation==""))
+                if((bookCopy.bookLocation.equals("")))
                 {
                boolean shelfAllotted = Shelf.setBookShelf(bookCopy);
                if(shelfAllotted==false)
                {
-                   bookCopy.bookLocation="GARAGE";
+                   bookCopy.bookLocation="GODOWN";
                    garage.add(bookCopy.bookID);
                }
                else{
@@ -203,13 +203,24 @@ public abstract class Shelf extends Rules implements Lists{
                    {
                        if(bookID==allShelfs[rows][columns])
                         {
-                            return "Shelf: "+rows+"    Position: "+columns;
+                            return "S"+(rows+1)+" - B"+(columns+1);
                         } 
                    }
                 }
                 
+                for(Book book:Resources.books)
+                {
+                    for(Book bookCopy:book.bookCopies)
+                    {
+                        if(bookCopy.bookID==bookID)
+                        {
+                            return bookCopy.bookLocation;
+                        }
+                    }
+                }
+                
             
-        return "GARAGE";
+        return "GODOWN";
     }
     
     public static void removeShelf(int bookNo,int bookID)
@@ -230,11 +241,11 @@ public abstract class Shelf extends Rules implements Lists{
     public static void reassignShelf(int bookNo)
     {
         
-        for(Book book:books)
+        for(Book book:Resources.books)
         {
             for(Book bookCopy:book.bookCopies)
             {
-                if((bookCopy.bookNo==bookNo)&&(((bookCopy.bookLocation=="GARAGE")||(bookCopy.bookLocation==""))))
+                if((bookCopy.bookNo!=bookNo)&&(((bookCopy.bookLocation.equals("GODOWN"))||(bookCopy.bookLocation.equals("")))))
                     
                 {
                     boolean shelfAllotted = Shelf.setBookShelf(bookCopy);
@@ -245,7 +256,7 @@ public abstract class Shelf extends Rules implements Lists{
                     }
                     
                 }
-                else if((((bookCopy.bookLocation=="GARAGE")||(bookCopy.bookLocation==""))))
+                else if((((bookCopy.bookLocation.equals("GODOWN"))||(bookCopy.bookLocation.equals("")))))
                 {
                     boolean shelfAllotted = Shelf.setBookShelf(bookCopy);
                     if(shelfAllotted)
@@ -275,7 +286,7 @@ public abstract class Shelf extends Rules implements Lists{
     public static void removeBookShelfOnly(int bookNo)
     {
         
-        for(Book book:books)
+        for(Book book:Resources.books)
         {
             if(book.bookNo==bookNo)
             {
