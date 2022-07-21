@@ -246,17 +246,17 @@ public abstract class Utils {
     
     public static String assignGenre(int genreReference)
     {
-        final int ACTION=0;
-        final int DRAMA=1;
-        final int SCIENCEFICTION=2;
-        final int ROMANCE=3;
-        final int CRIME=4;
-        final int THRILLER=5;
-        final int HORROR=6;
-        final int DOCUMENTARY=7;
-        final int NOVEL=8;
-        final int HISTORY=9;
-        final int OTHER=10;
+        final int ACTION=1;
+        final int DRAMA=2;
+        final int SCIENCEFICTION=3;
+        final int ROMANCE=4;
+        final int CRIME=5;
+        final int THRILLER=6;
+        final int HORROR=7;
+        final int DOCUMENTARY=8;
+        final int NOVEL=9;
+        final int HISTORY=10;
+        final int OTHER=11;
         
               
         switch(genreReference)
@@ -346,4 +346,38 @@ public abstract class Utils {
         }
         return "";
     }
+    
+    public static String checkYear(String value)
+    {
+        int index=0;
+        boolean hasString = false;
+        while(index<value.length())
+        {
+            if(!((((value.charAt(index)>='0')&&(value.charAt(index)<='9'))&&(value.length()==4))))
+            {
+                
+                hasString = true;
+                break;
+           
+            }
+            
+            index++;
+        }
+        if(hasString)
+        {
+            value = Utils.getYear();
+        }
+        return value;
+    }
+    
+
+
+    static public String getYear()
+    {
+        String value;
+        System.out.println("Enter Valid Year(yyyy)!!");
+        value=Utils.getString();
+        return Utils.checkYear(value);
+    }   
+
 }
