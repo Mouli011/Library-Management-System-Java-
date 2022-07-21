@@ -704,14 +704,14 @@ public class Patron extends User implements Lists{
     }
     public void displayIndividualPatronPayment(int userID)
     {
-        System.out.format("%5s %20s %15s %25s %20s", "PAYMENT ID", "PAYMENT DATE", "AMOUNT PAID","PAYMENT PLATFORM", "PAYMENT PURPOSE");  
+        System.out.format("%5s %20s %15s %25s %25s", "PAYMENT ID", "PAYMENT DATE", "AMOUNT PAID","PAYMENT PLATFORM", "PAYMENT PURPOSE");  
         System.out.println();  
         System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
         
         //System.out.println("PaymentID\t\tPayment Platform\t\tPayment Purpose\t\tAmount Paid\t\tPayment Date");
         for(Payment payment:individualPatronPayments)
         {
-            System.out.format("%5s %20s %15s %25s %20s", payment.paymentID, Utils.printDate(payment.paymentDate), payment.paymentAmount,payment.paymentPlatform, payment.paymentPurpose);  
+            System.out.format("%5s %20s %15s %25s %25s", payment.paymentID, Utils.printDate(payment.paymentDate), payment.paymentAmount,payment.paymentPlatform, payment.paymentPurpose);  
             System.out.println();  
             System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
             //System.out.println(payment.paymentID+"\t\t"+payment.paymentPlatform+"\t\t"+payment.paymentPurpose+"\t\t"+payment.paymentAmount+"\t\t"+Utils.printDate(payment.paymentDate));
