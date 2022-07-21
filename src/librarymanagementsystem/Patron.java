@@ -248,7 +248,7 @@ public class Patron extends User implements Lists{
         while(LibraryManagementSystem.toBoolean(userChoice))
         {
         System.out.println("Enter Appropriate Option: ");
-        System.out.println("\t\t1.To Search By Book Name\n\t\t2.To Search By Author Name\t\t3.To Search By Genre\t\t0.Exit");
+        System.out.println("\t\t1.To Search By Book Name\n\t\t2.To Search By Author Name\n\t\t3.To Search By Genre\n\t\t0.Exit");
         System.out.println("Your Option: ");
         userChoice = Utils.getInt();
         switch(userChoice)
@@ -366,6 +366,7 @@ public class Patron extends User implements Lists{
             default:
                 System.out.println("Enter Valid Option!!");
                 userChoice=Utils.getInt();
+                continue;
         }   
         bookFound=0;
         if(userChoice>0)
@@ -467,7 +468,6 @@ public class Patron extends User implements Lists{
              System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHER", "GENRE" ,"BOOK LOCATION");  
             System.out.println();  
              System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
-            //System.out.println("Book No\t\tBook Name\t\tAuthor\t\tPublisher\t\tAvaialable Copies\t\t");
 
                 for(Book book:books)
                 {
@@ -549,7 +549,7 @@ public class Patron extends User implements Lists{
     public void displayBorrowedBooks()
     {
         System.out.println("------------------------------------------------------------------------------------------------------------------------------");  
-        System.out.printf("%5s %20s %15s %20s %20s %25s %25s ", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHER", "BORROWED DATE","LAST DATE TO RETURN THE BOOK");  
+        System.out.printf("%5s %20s %15s %20s %20s %25s %25s ", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHER", "BORROWED DATE","RETURN DATE DUE");  
         System.out.println();  
         System.out.println("------------------------------------------------------------------------------------------------------------------------------");  
         //System.out.println("Book ID\t\tBook Name\t\tBook No\t\tAuthor\t\tPublisher\t\tBorrowedDate\t\tLast Date To Return the Book");
