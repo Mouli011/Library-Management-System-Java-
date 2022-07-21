@@ -79,9 +79,8 @@ public class Payment extends Patron {
             System.out.println();  
             System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
         //System.out.println("PaymentID\t\tUserID\t\tUsername\t\tAmount Paid\t\tPayment Date\t\tPayment Platform\t\tPayment Purpose");
-        for(Payment payment:payments)
+        for(Payment payment:Resources.payments)
         {
-             System.out.println("-----------------------------------------------------------------------------------------------------------------");  
              System.out.printf("%5s %15s %15s %15s %20s %25s %25s ", payment.paymentID, payment.userID,payment.userName,  payment.paymentAmount, Utils.printDate(payment.paymentDate), payment.paymentPlatform,payment.paymentPurpose );  
             System.out.println();  
             System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
