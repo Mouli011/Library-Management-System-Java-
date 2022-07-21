@@ -53,7 +53,7 @@ public class Rules {
          while(LibraryManagementSystem.toBoolean(userChoice))
         {
         System.out.println("Enter: ");
-        System.out.println("\t\t1.To Update Return Date Limit\n\t\t2.To Update Fine For Late Submission\n\t\t3.To Update Renewal Fee\n\t\t4.To Update Renewal days\n\t\t5.To Set Maximum Renewal Count\n\t\t0.To Previous Page ");
+        System.out.println("\t\t1.Update Return Date Limit\n\t\t2.Update Fine For Late Submission\n\t\t3.Update Renewal Fee\n\t\t4.Update Renewal days\n\t\t5.Set Maximum Renewal Count\n\t\t0.Previous Page ");
         System.out.println("Enter appropriate option: ");
         userChoice = Utils.getInt();
          
