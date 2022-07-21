@@ -28,7 +28,7 @@ public class Book extends Rules implements Lists{
     String author;
     String publisher;
     int availableCopies;
-    int genreReference; //declared int as it can access the ENUM using index
+    int genreReference; 
     String genre;
     boolean isAvailable;
     Date borrowedDate;
@@ -275,6 +275,7 @@ public class Book extends Rules implements Lists{
                 }
             }
         }
+        }
         if(bookMatch==0)
         {
             System.out.println("Enter Valid Book ID:");
@@ -282,7 +283,6 @@ public class Book extends Rules implements Lists{
             Book addedBook = new Book();
             addedBook=addedBook.assignBookCopy(bookID);
             return addedBook;
-        }
         }
         Book book = new Book();
         book.bookID=-1;
