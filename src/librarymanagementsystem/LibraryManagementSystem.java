@@ -22,7 +22,7 @@ public class LibraryManagementSystem {
     public static void main(String[] args) {
         
         
-        //constants12
+        //constants
         
                 
         final int ADMIN = 1;
