@@ -97,56 +97,32 @@ public abstract class Utils {
     }*/
     static public String checkMailID(String value)
     {
-        String emailRegex = "[A-Z]+[a-zA-Z_]+@\b([a-zA-Z]+.){2}\b?.[a-zA-Z]+";
-        boolean isValid = value.matches(emailRegex);
-        if(isValid)
+        int aliasCount=0;
+        int index=0;
+        int length = value.length();
+        while(index<length)
+        {
+            if(value.charAt(index)=='@')
+            {
+                aliasCount++;
+            }
+            index++;
+        }
+       
+        if((aliasCount==1)&&(value.charAt(length-4)=='.'))
         {
             return value;
         }
-        else{
-            try{
-           System.out.println("Enter valid Mail ID");
-       
-       value = bufferedReader.readLine();
-       }
-       catch(IOException e)
-       {
-           System.out.println("Error Occured "+e);
-       }
-       return Utils.checkMailID(value);
-       }
-        
-        
-       /*int index=0;
-       int aliasSymbolCount=0;      
-       int length = value.length();
-       while(index<value.length())
-       {
-           if((value.length()>0)&&(value.charAt(index)=='@'))
-           {
-               aliasSymbolCount++;
-           }
-           index++;
-       }
-       if(aliasSymbolCount==1&&((((value.charAt(length-2)=='c')&&(value.charAt(length-1)=='o'))&&(value.charAt(length)=='m'))))
-       {
-           return value;
-       }
-       else
-       {
-           try{
-           System.out.println("Enter valid Mail ID");
-       
-       value = bufferedReader.readLine();
-       }
-       catch(Exception e)
-       {
-           System.out.println("Error Occured "+e);
-       }
-       return Utils.checkMailID(value);
-       }*/
-       
+        return getMailID(value);
     }
+    
+    public static String getMailID(String value)
+    {
+        System.out.println("Enter Valid MailID:");
+        value = Utils.getString();
+        return Utils.checkMailID(value);
+    }
+    
     static public String checkPhoneNumberConstraint(String value)
     {
         boolean hasString = false;
