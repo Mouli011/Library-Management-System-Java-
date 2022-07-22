@@ -36,6 +36,7 @@ public class Book extends Rules{
     int totalCopies;
     double bookPrice;
     String bookLocation="";
+    int borrowedCopies=0;
     
     
     
@@ -64,7 +65,7 @@ public class Book extends Rules{
             genre = Utils.assignGenre(genreReference);
             System.out.println("Enter Book Price: ");
             bookPrice = Utils.getDouble();
-            
+            bookID = bookIDReference;
             Book book;
             for(int i=0;i<totalCopies;i++)
             {
@@ -173,15 +174,15 @@ public class Book extends Rules{
             if(book.bookNo==bookNo&&(book.availableCopies>0))
             {
              bookMatch++;
-        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");  
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------");  
              System.out.printf("%5s %20s %15s %20s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"AVAILABILITY","BOOK LOCATION");  
             System.out.println();  
-        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");  
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------");  
              //System.out.println("Book ID\t\tBook Name\t\tBook No\t\tAuthor\t\tPublisher\t\tAvailability");
              for(Book bookCopy:book.bookCopies){
              System.out.printf("%5s %20s %15s %20s %20s %22s %15s %15s", bookCopy.bookID, bookCopy.bookName,bookCopy.bookNo, bookCopy.author, bookCopy.publishedIn, bookCopy.genre, bookCopy.isAvailable,Shelf.getBookPosition(bookCopy.bookID));  
             System.out.println();  
-        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");  
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------");  
             //System.out.println(bookCopy.bookID+"\t\t"+bookCopy.bookName+"\t\t"+bookCopy.bookNo+"\t\t\t"+bookCopy.author+"\t\t"+bookCopy.publishedIn+"\t\t"+bookCopy.isAvailable);
              }
              
@@ -273,6 +274,7 @@ public class Book extends Rules{
                     bookCopy.setDateLimit();
                     book.availableCopies--;
                     bookCopy.bookLocation="BORROWED";
+                    book.borrowedCopies++;
                     Shelf.removeShelf(book.bookNo,bookCopy.bookID);
                     return bookCopy;
                 }
@@ -390,7 +392,7 @@ public class Book extends Rules{
             book.viewBookCopies();
             
         }
-        else if(userChoice!=0&&userChoice!=1){
+        else if((userChoice!=0)&&(userChoice!=1)&&(userChoice!=2)){
             System.out.println("Enter Valid Option!!!");
             new Book().viewBooks();
         }
@@ -400,7 +402,7 @@ public class Book extends Rules{
         }
         if(userChoice==2)
         {
-            System.out.println("Enter the Number of The Book To Be Deleted From The Above List: ");
+            System.out.println("Enter the Book Number To Be Deleted From The Above List: ");
             int bookNo;
             int bookMatch =0;
             bookNo = Utils.getInt();
@@ -460,13 +462,23 @@ public class Book extends Rules{
         if(userChoice==1)
         {
         int bookID;
+        String bookIDInString;
         
-        System.out.println("\n\nEnter the ID of the books to be deleted(Press Enter After Each ID's): \nPress -1 after Completion\n");
+        System.out.println("\n\nEnter the ID of the books to be deleted(Press Enter After Each ID's): \nPress Enter after Completion\n");
         
         ArrayList<Integer> bookIDList = new ArrayList<Integer>();
         
+        do
+        {
+            bookIDInString=Utils.getString();
+            if(bookIDInString.isEmpty())
+                break;
+            bookID = Integer.parseInt(bookIDInString);
+            bookIDList.add(bookID);
+        }while(true); 
         
-        for(;;)
+        
+        /*for(;;)
         {
             bookID = Utils.getInt();
             if(bookID!=-1)
@@ -479,7 +491,7 @@ public class Book extends Rules{
             {
                 break;
             }
-        }
+        }*/
            System.out.println("Confirm Deletion:\n\t\t1.Yes\n\t\t0.No");
            confirm = Utils.getInt();
            while((confirm!=0)&&(confirm!=1))
@@ -544,13 +556,13 @@ public class Book extends Rules{
             System.out.println("Number Of Books Deleted: "+deleteCount);
             deleteCount=0;
         }       
-        }
+        
         for(Book books:Resources.books)
         {
             books.toBeDeletedBooks.removeAll(books.toBeDeletedBooks);
         }
         Shelf.reassignShelf(bookNo);
-        
+        }
         System.out.println("Enter 1.Delete more books");
         System.out.println("Enter 0.Main Page");
         System.out.println("Enter appropraite Option: ");
@@ -675,4 +687,158 @@ public class Book extends Rules{
         }
     }
     
+    public static void filterBooks()
+    {
+        final int AUTHORNAME=1;
+        final int GENRE=2;
+        final int POPULARITY=3;
+        final int BORROW=4;
+        
+        System.out.println("Enter\n\t\t1.Filter By Author Name\n\t\t2.Filter by Genre\n\t\t3.Filter By Popularity\n\t\t4.Borrow");
+        int userChoice = Utils.getInt();
+        int bookFound;
+        switch(userChoice)
+        {
+            case AUTHORNAME:
+                bookFound=Book.filterByAuthorName();
+                break;
+            case GENRE:
+                bookFound=Book.filterByGenre();
+                break;
+            case POPULARITY:
+                Book.filterByPopularity();
+                bookFound=1;
+                break;
+            case BORROW:
+                bookFound=1;
+                break;
+                
+            default:
+                System.out.println("Enter Valid Option!!");
+                bookFound=0;
+                break;
+                
+        }
+        if(bookFound==0)
+        {
+         System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
+             System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
+            System.out.println();  
+             System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
+
+                for(Book book:Resources.books)
+                {
+                    if(book.availableCopies>0)
+                    {
+                        for(Book bookCopy:book.bookCopies)
+                        {
+                            if(bookCopy.isAvailable==true)
+                            {
+                                bookCopy.displaySingleBookCopy();
+                            }
+                        }
+                    }
+                    
+                }   
+        }
+    }
+    public static int filterByAuthorName()
+    {
+        int bookFound=0;
+        System.out.println("Enter Author Name: ");
+        String author = Utils.getString();
+        for(Book book:Resources.books)
+        {
+            for(Book bookCopy:book.bookCopies)
+            {
+                if(((book.author.replaceAll("\\s+","").toLowerCase()).contains(author.replaceAll("\\s+","").toLowerCase()))) 
+                {
+                        
+                    if(bookFound==0)
+                    {
+                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
+                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
+                        System.out.println();  
+                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------"); 
+                        bookCopy.displaySingleBookCopy();
+                    }
+                    if(bookFound>0)
+                    {
+                        bookCopy.displaySingleBookCopy();
+                    }
+                bookFound++;
+                }
+            }
+        }
+       
+               if(bookFound==0)
+                {
+                System.out.println("No Authors Found!!");
+                }
+        return bookFound;
+    }
+    public static int filterByGenre()
+    {
+        int bookFound=0;
+        System.out.println("Select the Appropriate Genre: ");
+        System.out.println("\t\t1.ACTION\n\t\t2.DRAMA\n\t\t3.SCIENCE FICTION\n\t\t4.ROMANCE\n\t\t5.CRIME\n\t\t6.THRILLER\n\t\t7.HORROR\n\t\t8.DOCUMENTARY\n\t\t9.NOVEL\n\t\t10.HISTORY\n\t\t11.OTHER");
+        System.out.println("Enter Option: ");
+        int genreReference = Utils.getInt();
+        String genre = Utils.assignGenre(genreReference);
+        for(Book book:Resources.books)
+        {
+            for(Book bookCopy:book.bookCopies)
+            
+                if(((book.genre.replaceAll("\\s+","").toLowerCase()).contains(genre.replaceAll("\\s+","").toLowerCase()))) 
+                {
+                        
+                    if(bookFound==0)
+                    {
+                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
+                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
+                        System.out.println();  
+                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------"); 
+                        bookCopy.displaySingleBookCopy();
+                    }
+                if(bookFound>0)
+                {
+                            bookCopy.displaySingleBookCopy();
+                }
+                bookFound++;
+                }
+            
+        }
+        if(bookFound==0)
+                {
+                System.out.println("No Books Found in this Genre!!");
+                }
+        return bookFound;
+    }
+    public static void filterByPopularity()
+    {
+        Collections.sort(Resources.books,new BookPopularityComparator());
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
+        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
+        System.out.println();  
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------"); 
+        for(Book book:Resources.books)
+                {
+                    if(book.availableCopies>0)
+                    {
+                        for(Book bookCopy:book.bookCopies)
+                        {
+                            if(bookCopy.isAvailable==true)
+                            {
+                                bookCopy.displaySingleBookCopy();
+                            }
+                        }
+                    }
+                    
+                }
+        
+        Collections.sort(Resources.books,new BookIDComparator());
+        
+        
+    }
 }
+
