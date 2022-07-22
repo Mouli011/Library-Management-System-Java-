@@ -14,7 +14,7 @@ public class Resources {
     public static ArrayList<Admin> admins = new ArrayList<Admin>();
     public static ArrayList<User> users = new ArrayList<User>();
     public static ArrayList<Payment> payments = new ArrayList<Payment>();
-    public static ArrayList<Book> lostBooks = new ArrayList<Book>();
+    public static HashSet<Book> lostBooks = new HashSet<Book>();
     
     public static int lostBookCount = 0;
     
