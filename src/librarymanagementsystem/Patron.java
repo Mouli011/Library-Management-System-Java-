@@ -291,73 +291,18 @@ public class Patron extends User{
                 
                 break;
             case SEARCHBYAUTHOR:
-                System.out.println("Enter Author Name: ");
-                String author = Utils.getString();
-                for(Book book:Resources.books)
+                bookFound = Book.filterByAuthorName();
+                if(bookFound==0)
                 {
-                    for(Book bookCopy:book.bookCopies)
-                    {
-                    if(((book.author.replaceAll("\\s+","").toLowerCase()).contains(author.replaceAll("\\s+","").toLowerCase()))) 
-                    {
-                        
-                        if(bookFound==0)
-                        {
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
-                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
-                        System.out.println();  
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------"); 
-                        bookCopy.displaySingleBookCopy();
-                        }
-                        if(bookFound>0)
-                        {
-                            bookCopy.displaySingleBookCopy();
-                        }
-                    bookFound++;
-                }
-                }
-                }
-       
-               if(bookFound==0)
-                {
-                System.out.println("No Authors Found!!");
                 userChoice=1;
                 continue;
                 }
                 
                 break;
             case SEARCHBYGENRE:
-                System.out.println("Select the Appropriate Genre: ");
-                System.out.println("\t\t1.ACTION\n\t\t2.DRAMA\n\t\t3.SCIENCE FICTION\n\t\t4.ROMANCE\n\t\t5.CRIME\n\t\t6.THRILLER\n\t\t7.HORROR\n\t\t8.DOCUMENTARY\n\t\t9.NOVEL\n\t\t10.HISTORY\n\t\t11.OTHER");
-                System.out.println("Enter Option: ");
-                int genreReference = Utils.getInt();
-                String genre = Utils.assignGenre(genreReference);
-                for(Book book:Resources.books)
+                bookFound = Book.filterByGenre();
+                if(bookFound==0)
                 {
-                    for(Book bookCopy:book.bookCopies)
-                    {
-                    if(((book.genre.replaceAll("\\s+","").toLowerCase()).contains(genre.replaceAll("\\s+","").toLowerCase()))) 
-                    {
-                        
-                        if(bookFound==0)
-                        {
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
-                        System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
-                        System.out.println();  
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------"); 
-                        bookCopy.displaySingleBookCopy();
-                        }
-                        if(bookFound>0)
-                        {
-                            bookCopy.displaySingleBookCopy();
-                        }
-                    bookFound++;
-                }
-                }
-                }
-       
-               if(bookFound==0)
-                {
-                System.out.println("No Books Found in this Genre!!");
                 userChoice=1;
                 continue;
                 }
@@ -489,6 +434,21 @@ public class Patron extends User{
                     }
                     
                 }
+                System.out.println("Enter\n\t\t1.Filter\n\t\t2.Borrow\n\t\t0.Main Page");
+                int filterChoice = Utils.getInt();
+                while((filterChoice!=0)&&(filterChoice!=1)&&(filterChoice!=2))
+                {
+                    System.out.println("Enter Valid Option: ");
+                    filterChoice =Utils.getInt();
+                }
+                if(filterChoice==1)
+                Book.filterBooks();
+                if(filterChoice==0)
+                {
+                    loopExit=0;
+                    continue;
+                }
+                
         }
                 if((availableBooks>0)||(borrowRequest==1))
                 {
@@ -504,7 +464,7 @@ public class Patron extends User{
                 
                 Book addedBook = new Book();
                 addedBook=addedBook.assignBookCopy(bookID);
-                if(addedBook.bookID>=0){
+                if(addedBook.bookID>0){
                 patron.bookCount++;
                 patron.borrowedBooks.add(addedBook);
                 System.out.println("Book Borrowed Succussfully!!!");
@@ -737,6 +697,8 @@ public class Patron extends User{
                         if(patron.userID==userID)
                         {
                         payment.paymentPurpose ="Fine for Late Return";
+                        payment.userName = patron.userName;
+                        payment.userID = patron.userID;
                         patron.individualPatronPayments.add(payment);
                         Resources.payments.add(payment);
                         }
@@ -783,10 +745,12 @@ public class Patron extends User{
         int bookID;
         int bookMatch=0;
         int confirm;
+        
         for(Patron patron:Resources.patrons)
         {
+            first:
             while(LibraryManagementSystem.toBoolean(loopExit))
-            {
+        {
             if((patron.userID==userID)&&(patron.renewalCount<maxRenewalCount)&&(patron.bookCount>0))
             {
                 
@@ -796,7 +760,7 @@ public class Patron extends User{
                 if(bookID==0)
                 {
                     loopExit=0;
-                    continue;
+                    break first;
                 }
                 for(Book book:Resources.books)
                 {
@@ -804,6 +768,8 @@ public class Patron extends User{
                     {
                         if(bookCopy.bookID==bookID)
                         {
+                            
+                            bookMatch++;
                             System.out.println("Confirm The Renewal Of The Book\n\t\t1.Yes\n\t\t0.No");
                                 confirm = Utils.getInt();
                                 while((confirm!=0)&&(confirm!=1))
@@ -815,12 +781,11 @@ public class Patron extends User{
                                 {
                                     System.out.println("Book Not Renewed!!");
                                     loopExit =0;
-                                    continue;
+                                    break first;
                                 }
                                 if(confirm==1)
                                 {   
                             patron.fine = patron.checkFine();
-                            bookMatch++;
                             patron.fine = patron.fine + renewalFee;
                             boolean finePayCheck = patron.payRenewal(patron.fine);
                                 if(finePayCheck)
@@ -831,14 +796,14 @@ public class Patron extends User{
                                    System.out.println("Renewed Return Date: "+Utils.printDate(bookCopy.toBeReturnedDate));
                                    patron.fine = 0;
                                    loopExit=0;
-                                   continue;
+                                   break first;
                                    
                                 }
                                 else
                                 {
                                     System.out.println("Book Not Renewed!!!");
                                     loopExit=0;
-                                    continue;
+                                    break first;
                                 }
                                 }
                         
@@ -851,26 +816,26 @@ public class Patron extends User{
             {
                 System.out.println("No Books to Renew!!");
                 loopExit=0;
-                continue;
+                break first;
             }
             else if((patron.userID==userID)&&(patron.renewalCount<=maxRenewalCount))
             {
                 System.out.println("Renewal Limit Reached");
                 loopExit=0;
-                continue;
+                break first;
             }
-                /*if(bookMatch==0)
+            
+            /*else if((bookMatch==0)&&(loopExit>0))
                 {
-                    System.out.print("IN BOOK MATCH0");
                     System.out.println("Enter Valid Book ID!!");
                     new Patron().renewBooks(userID);
-                    System.out.print("IN BOOK MATCH0");
                     loopExit=0;
                     continue;
                 }*/
             System.out.println("Enter Valid Book ID!!");
+            new Patron().renewBooks(userID);
+            loopExit=0;
         }
-        
         }
     }
      public boolean payRenewal(double fine)
