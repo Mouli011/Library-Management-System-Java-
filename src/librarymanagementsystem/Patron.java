@@ -97,6 +97,7 @@ public class Patron extends User{
         System.out.println("Enter Mail ID: ");
         mailID = Utils.getString();
         mailID = Utils.checkNotNull(mailID);
+        mailID = Utils.checkMailID(mailID);
         //mailID = Utils.checkMailID(mailID);
         
         System.out.println("Enter Date Of Birth(dd-MM-yyyy): ");
