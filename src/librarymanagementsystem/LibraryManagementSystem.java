@@ -17,8 +17,7 @@ public class LibraryManagementSystem {
      * 
      * @param args the command line arguments
      * 
-     */
-    
+     */    
    
     public static void main(String[] args) {
         
@@ -79,15 +78,7 @@ public class LibraryManagementSystem {
     {
         
         
-        if(tobeConverted>0)
-        {
-            return true;
-                    
-        }
-        else
-        {
-            return false;
-        }
+        return tobeConverted>0;
     }
     
 }
