@@ -197,10 +197,40 @@ public abstract class Utils {
     
    public static int getInt()
    {
-       int value;
+       String stringValue;
+       stringValue = Utils.getString();
+       stringValue = Utils.checkNotNull(stringValue);
+       return Utils.checkHasString(stringValue);
+       /*int value;
        value=scanner.nextInt();
-       return value;
+       return value;*/
    }
+   
+   public static int checkHasString(String value)
+   {
+        int index=0;
+        boolean hasString = false;
+        while(index<value.length())
+        {
+            if(!((((value.charAt(index)>='0')&&(value.charAt(index)<='9'))&&(value.length()<9))))
+            {
+                
+                hasString = true;
+                break;
+           
+            }
+            
+            index++;
+        }
+        if(hasString)
+        {
+            System.out.println("Enter Numbers Only!!");
+            value = Utils.getString();
+            return Utils.checkHasString(value);
+        }
+        return Integer.parseInt(value);
+   }
+   
     
     static public  String getString()
     {
