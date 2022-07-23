@@ -14,9 +14,14 @@ public class Patron extends User{
     static int patronCount =0;
     
     protected int bookCount = 0;
+    protected double totalFine = 0.0;
     ArrayList<Book> borrowedBooks = new ArrayList<Book>();
-    protected double fine = 0;
+    protected double fine = 0.0;
     ArrayList<Payment> individualPatronPayments = new ArrayList<Payment>();
+    int booksOnHoldCount=0;
+    int previousBooksOnHoldCount =0;
+    protected HashSet<Book> approvedBooks = new HashSet<Book>();
+    protected HashSet<Book> booksOnHold = new HashSet<Book>();
     protected int renewalCount=0;
     String mailID;
     
@@ -143,7 +148,13 @@ public class Patron extends User{
             }
             
         }
-        
+        for(Patron patron:Resources.patrons)
+        {
+            if((patron.userID==userID)&&(patron.booksOnHoldCount!=patron.previousBooksOnHoldCount))
+            {
+                Patron.borrowRequestApproved(patron);
+            }
+        }
         int userChoice = 1;
         while(LibraryManagementSystem.toBoolean(userChoice))
         {
@@ -229,7 +240,7 @@ public class Patron extends User{
                 patron.displayBorrowedBooks();
             }
             
-            patron.fine=patron.checkFine();
+            patron.fine=patron.checkTotalFine();
             System.out.println("Fine Amount: "+patron.fine);
             
             }
@@ -459,12 +470,12 @@ public class Patron extends User{
                 {
                 for(Patron patron: Resources.patrons)
                 {
-            if(((patron.userID)==userID)&&(patron.bookCount<=1)&&(patron.fine==0))
+            if(((patron.userID)==userID)&&(patron.bookCount<=1)&&(patron.fine==0)&&(patron.booksOnHoldCount<=1))
             {
                 
                 
                 Book addedBook = new Book();
-                addedBook=addedBook.assignBookCopy(bookID);
+                addedBook=addedBook.assignBookCopy(bookID,patron);
                 if(addedBook.bookID>0){
                 patron.bookCount++;
                 patron.borrowedBooks.add(addedBook);
@@ -472,7 +483,7 @@ public class Patron extends User{
                 patron.displayBorrowedBooks();
                 for(Book borrowedBook:patron.borrowedBooks)  
                 {
-                    patron.fine = patron.checkFine();
+                    patron.fine = patron.checkFine(borrowedBook.bookID);
                 }
                 
                 }
@@ -480,12 +491,18 @@ public class Patron extends User{
                 continue;
                 }
                 
-                
+            else if(patron.booksOnHoldCount>1)
+            {
+                System.out.println("Book Hold List Full!!");
+                loopExit=0;
+                continue;
+            }
             
             else if(((patron.userID)==userID)&&(patron.bookCount>0)&&(patron.fine>0))
             {
                 System.out.println("Return Books and Pay Fine to Borrow new Books");
                 patron.returnBooks(userID );
+                Shelf.assignShelf();
                 loopExit=0;
                 continue;
             }
@@ -493,6 +510,7 @@ public class Patron extends User{
             {
                 System.out.println("Return Books to Borrow new Books");
                 patron.returnBooks(userID );
+                Shelf.assignShelf();
                 loopExit=0;
                 continue;
             }
@@ -573,7 +591,7 @@ public class Patron extends User{
                     {
                         if((bookCopy.bookID==bookID)&&(bookCopy.isAvailable==false))
                         {
-                            patron.fine = patron.checkFine();
+                            patron.fine = patron.checkFine(bookCopy.bookID);
                             bookMatch++;
                             if(patron.fine==0)
                             {
@@ -721,6 +739,8 @@ public class Patron extends User{
     }
     public void displayIndividualPatronPayment(int userID)
     {
+        if(!individualPatronPayments.isEmpty())
+        {
         System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
         System.out.format("%5s %20s %15s %25s %25s", "PAYMENT ID", "PAYMENT DATE", "AMOUNT PAID","PAYMENT PLATFORM", "PAYMENT PURPOSE");  
         System.out.println();  
@@ -737,7 +757,11 @@ public class Patron extends User{
         
        
         
-        
+        }
+        else
+        {
+            System.out.println("No Payments Done");
+        }
     }
     public void renewBooks(int userID)
     {
@@ -752,7 +776,7 @@ public class Patron extends User{
             first:
             while(LibraryManagementSystem.toBoolean(loopExit))
         {
-            if((patron.userID==userID)&&(patron.renewalCount<maxRenewalCount)&&(patron.bookCount>0))
+            if((patron.userID==userID)&&(patron.renewalCount<Rules.maxRenewalCount)&&(patron.bookCount>0))
             {
                 
                 patron.displayBorrowedBooks();
@@ -786,8 +810,8 @@ public class Patron extends User{
                                 }
                                 if(confirm==1)
                                 {   
-                            patron.fine = patron.checkFine();
-                            patron.fine = patron.fine + renewalFee;
+                            patron.fine = patron.checkFine(bookCopy.bookID);
+                            patron.fine = patron.fine + Rules.renewalFee;
                             boolean finePayCheck = patron.payRenewal(patron.fine);
                                 if(finePayCheck)
                                 {
@@ -813,13 +837,13 @@ public class Patron extends User{
                 }
                }
                 
-            else if((patron.userID==userID)&&(patron.renewalCount<maxRenewalCount)&&(patron.bookCount==0))
+            else if((patron.userID==userID)&&(patron.renewalCount<Rules.maxRenewalCount)&&(patron.bookCount==0))
             {
                 System.out.println("No Books to Renew!!");
                 loopExit=0;
                 break first;
             }
-            else if((patron.userID==userID)&&(patron.renewalCount<=maxRenewalCount))
+            else if((patron.userID==userID)&&(patron.renewalCount<=Rules.maxRenewalCount))
             {
                 System.out.println("Renewal Limit Reached");
                 loopExit=0;
@@ -849,7 +873,7 @@ public class Patron extends User{
         boolean paymentResult = false;
         
         System.out.println("Amount To Be Paid: "+fine);
-        System.out.println("\t\tFine: "+(fine-renewalFee)+"\n\t\tRenewal Fee: "+renewalFee);
+        System.out.println("\t\tFine: "+(fine-Rules.renewalFee)+"\n\t\tRenewal Fee: "+Rules.renewalFee);
         System.out.println("Enter appropriate Option");
         System.out.println("\t\t1.Proceed To Pay\n\t\t0.Cancel");
         int userChoice;
@@ -882,15 +906,31 @@ public class Patron extends User{
         }
         return paymentResult;
     }
-     public double checkFine()
+     public double checkFine(int bookID)
      {
          
-         double fine = 0;
+         double fine = 0.0;
          
-                 this.fine = 0;
+                 this.fine = 0.0;
                  for(Book borrowedBook:borrowedBooks)
                  {   
+                     if(borrowedBook.bookID==bookID)
+                     {
                  fine = this.fine +borrowedBook.fineCalculator();
+                     }
+                  }
+             
+         return fine;
+     }
+     public double checkTotalFine()
+     {
+         
+         double fine = 0.0;
+         
+                 this.fine = 0.0;
+                 for(Book borrowedBook:borrowedBooks)
+                 {   
+                 fine = borrowedBook.fineCalculator() +fine;
                   }
              
          return fine;
@@ -951,7 +991,7 @@ public class Patron extends User{
                  if(confirm==1)
                  {   
                  
-                 this.fine = this.checkFine();
+                 this.fine = this.checkFine(bookLost.bookID);
                  this.fine = this.fine + bookLost.bookPrice;
                  bookMatch++;
                  boolean finePayCheck = this.payBookLostFine(this.fine,bookLost.bookPrice);
@@ -1050,5 +1090,124 @@ public class Patron extends User{
         }
         return paymentResult;
     }
+     
+     public static void borrowRequestApproved(Patron patron)
+     {
+         whileLoop:
+         while(true)
+         {
+         if((patron.bookCount<=1)&&(patron.fine==0))
+         {
+             approvedBookLoop:
+         for(Book approvedBook:patron.approvedBooks)
+         {
+             for(Book book:Resources.books)
+             {
+                 for(Book bookCopy:book.bookCopies)
+                 {
+                     if(bookCopy.bookID==approvedBook.bookID)
+                     {
+                         System.out.println("\n\n------Requested Book Approved!!!-------\n\n");
+                         System.out.println("------------------------------------------------------------------------------------------------------------------------------------");  
+                         System.out.printf("%5s %20s %15s %20s %20s %15s %20s", "BOOK ID", "BOOK NAME","BOOK NO",  "AUTHOR", "PUBLISHED IN", "GENRE" ,"BOOK LOCATION");  
+                         System.out.println();  
+                         System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
+                         bookCopy.displaySingleBookCopy();
+                         bookCopy.setDateLimit();
+                         patron.borrowedBooks.add(bookCopy);
+                         System.out.println("\n\n---------BOOK BORROWED SUCCESSFULLY------\n\n");
+                         patron.displayBorrowedBooks();
+                         System.out.println("\n\n");
+                         bookCopy.bookLocation="BORROWED";
+                         for(Book borrowedBook:patron.borrowedBooks)  
+                         {
+                            patron.fine = patron.checkFine(borrowedBook.bookID);
+                            
+                         }
+                         patron.previousBooksOnHoldCount--;
+                         patron.bookCount++;
+                         break approvedBookLoop;
+                         
+                     }
+                 }
+             }
+             
+         }
+         
+         patron.approvedBooks.removeAll(patron.borrowedBooks);
+         int previousBooksOnHoldCount=Patron.getPreviousBooksOnHoldCount(patron);
+         if(previousBooksOnHoldCount<=0)
+         {
+             break whileLoop;
+         }
+         continue whileLoop;
+         }
+             else if((patron.bookCount>1)||(patron.fine!=0))
+         {
+             System.out.println("Return Books And Pay Fine To Borrow Books!!!\n\t\tEnter 1.To Return Books\n\t\t 0.To Main Page\n\t-------NOTE: IF YOU PROCEED TO MAIN PAGE YOUR APPROVED BOOKS WILL BE REMOVED FROM YOUR APPROVED LIST-------");
+             int userChoice = Utils.getInt();
+             while((userChoice!=1)&&(userChoice!=0))
+             {
+                 System.out.println("Enter Valid Options: ");
+                 userChoice = Utils.getInt();
+             }
+             if(userChoice==1)
+             {
+                 patron.returnBooks(patron.userID);
+                 if((patron.bookCount<=1)&&(patron.fine==0))
+                 Patron.borrowRequestApproved(patron);
+                 int previousBooksOnHoldCount=Patron.getPreviousBooksOnHoldCount(patron);
+                 if(previousBooksOnHoldCount<=0)
+                 {
+                     Shelf.assignShelf();
+                     break whileLoop;
+                 }
+                     
+                 else
+                 {
+                     Patron.deleteApprovedBooks(patron);
+                     Shelf.assignShelf();
+                     break whileLoop;
+                 }
+             }
+             if(userChoice==0)
+             {
+                     Patron.deleteApprovedBooks(patron);
+                     Shelf.assignShelf();
+                     break whileLoop;
+             }
+         }
+     
+     }
+         
+          
+     }
+     public static void deleteApprovedBooks(Patron patron)
+     {
+         for(Book approvedBook:patron.approvedBooks)
+                     {
+                         for(Book book:Resources.books)
+                         {
+                             for(Book bookCopy:book.bookCopies)
+                             {
+                                 if(bookCopy.bookID==approvedBook.bookID)
+                                 {
+                                     bookCopy.bookLocation = "GODOWN";
+                                     bookCopy.isAvailable = true;
+                                     book.availableCopies++;
+                                 }
+                             }
+                         }
+                     }
+                     patron.booksOnHold.removeAll(patron.booksOnHold);
+                     patron.approvedBooks.removeAll(patron.approvedBooks);
+                     patron.booksOnHoldCount=0;
+                     patron.previousBooksOnHoldCount=0;
+     }
+     
+     public static int getPreviousBooksOnHoldCount(Patron patron)
+     {
+         return patron.previousBooksOnHoldCount;
+     }
      
 }
