@@ -9,12 +9,6 @@ import java.util.*;
  * @author mouli011
  */
 
-enum PaymentPlatform
-{
-    NETBANKING,
-    UPI;
-}
-
 public class Payment extends Patron {
     protected static int paymentIDReference = 0;
     protected int paymentID; 
