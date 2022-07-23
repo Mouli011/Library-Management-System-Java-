@@ -78,23 +78,6 @@ public abstract class Utils {
     }
     
     
-   /*static public String notNull(String value,String pass)
-    {
-        char[] returnValue;
-        if(value.length()==0)
-        {
-            try{System.out.println("This Field cannot be empty!!\nEnter Values: ");
-            returnValue = console.readPassword();
-            value = Utils.charToString(returnValue);
-            return Utils.notNull(value);
-            }
-            catch(Exception e)
-            {
-                System.out.println(e);
-            }
-        }
-        return value;
-    }*/
     static public String checkMailID(String value)
     {
         int aliasCount=0;
@@ -177,9 +160,6 @@ public abstract class Utils {
        stringValue = Utils.getString();
        stringValue = Utils.checkNotNull(stringValue);
        return Utils.checkHasString(stringValue);
-       /*int value;
-       value=scanner.nextInt();
-       return value;*/
    }
    
    public static int checkHasString(String value)
@@ -238,93 +218,6 @@ public abstract class Utils {
         return dateFormat.format(date);
     }
     
-    
-    /*static public String charToString(char[] value)
-    {
-       StringBuffer returnString = new StringBuffer();
-        int index=0;
-        for(int i=0;i<value.length;i++)
-        {  
-          returnString = returnString.append(value[i]);
-        }
-        return returnString.toString();
-    }*/
-    
-    public static String assignGenre(int genreReference)
-    {
-        final int ACTION=1;
-        final int DRAMA=2;
-        final int SCIENCEFICTION=3;
-        final int ROMANCE=4;
-        final int CRIME=5;
-        final int THRILLER=6;
-        final int HORROR=7;
-        final int DOCUMENTARY=8;
-        final int NOVEL=9;
-        final int HISTORY=10;
-        final int OTHER=11;
-        
-              
-        switch(genreReference)
-        {
-            case ACTION:
-                return "ACTION";
-                
-            case DRAMA:
-                return "DRAMA";
-                
-            case SCIENCEFICTION:
-                return "SCIENCEFICTION";
-                
-            case ROMANCE:
-                return "ROMANCE";
-                
-            case CRIME:
-                return "CRIME";
-                
-            case THRILLER:
-                return "THRILLER";
-                
-            case HORROR:
-                return "HORROR";
-                
-            case DOCUMENTARY:
-                return "DOCUMENTARY";
-                
-            case NOVEL:
-                return "NOVEL";
-                
-            case HISTORY:
-                return "HISTORY";
-                
-            case OTHER:
-                return "OTHER";
-                
-            default:
-                String genre=Utils.getGenre();
-                return genre;
-                
-        }
-    }
-    
-    public static String getGenre()
-    {
-        System.out.println("Enter Proper Option: ");
-        int genreReference = scanner.nextInt();
-        return Utils.assignGenre(genreReference);
-    }
-    
-    /*public static int setShelfZero()
-    {
-        for(int rows=0;rows<12;rows++)
-        {
-            for(int columns=0;columns<Rules.maximumBookInAShelf;columns++)
-            {
-                Shelf.allShelfs[rows][columns]=0;
-            }
-        }
-        return 1;
-    }*/
     public static String getGender()
     {
         
