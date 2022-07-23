@@ -10,7 +10,7 @@ import java.io.*;
  *
  * @author mouli011
  */
-public abstract class User  extends Rules{
+public abstract class User{
     
      
     
