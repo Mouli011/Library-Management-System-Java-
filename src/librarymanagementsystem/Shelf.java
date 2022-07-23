@@ -8,168 +8,63 @@ import java.util.*;
  *
  * @author mouli011
  */
-public abstract class Shelf extends Rules{
+public abstract class Shelf{
     
-    static int[][] allShelfs = new int[12][maximumBookInAShelf];
+    final static int TOTALGENRE = 11;
+    
+    static int[][] allShelfs = new int[(TOTALGENRE+1)][Rules.maximumBookInAShelf];
     static ArrayList<Integer> garage = new ArrayList<>();
 
     public Shelf() {
     }
     
-    public static boolean setBookShelf(Book bookToBeAllotted){
+    public static void callSetShelfWRTGenre(Book bookToBeAllotted){
         int shelfAllotted = 0;
         int rows;
         switch(bookToBeAllotted.genre)
         {
-            case "ACTION":
-                
-                rows=0;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case ACTION:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,0,shelfAllotted);
                 break;
-            case "DRAMA":
-               rows=1;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case DRAMA:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,1,shelfAllotted);
                 break;
-            case "SCIENCEFICTION":
-               rows=2;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case SCIENCEFICTION:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,2,shelfAllotted);
                 break;
-            case "ROMANCE":
-                rows=3;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case ROMANCE:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,3,shelfAllotted);
                 break;
-            case "CRIME":
-                rows=4;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case CRIME:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,4,shelfAllotted);
                 break;
-            case "THRILLER":
-               rows=5;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case THRILLER:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,5,shelfAllotted);
                 break;
-            case "HORROR":
-               rows=6;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case HORROR:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,6,shelfAllotted);
                 break;
-            case "DOCUMENTARY":
-                rows=7;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case DOCUMENTARY:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,7,shelfAllotted);
                 break;
-            case "NOVEL":
-               rows=8;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case NOVEL:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,8,shelfAllotted);
                 break;
-            case "HISTORY":
-               rows=9;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case HISTORY:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,9,shelfAllotted);
                 break;
-            case "OTHER":
-               rows=10;
-                    for(int columns=0;columns<maximumBookInAShelf;columns++)   
-                    {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
-                    }
+            case OTHER:
+                shelfAllotted = Shelf.setShelf(bookToBeAllotted,10,shelfAllotted);
                     break;
         }
         if(shelfAllotted==0)
                 {
-                   rows=11;
-                   for(int columns=0;columns<maximumBookInAShelf;columns++)   
+                    shelfAllotted = Shelf.setShelf(bookToBeAllotted,11,shelfAllotted);
+                    if(shelfAllotted==0)
                     {
-                        if(allShelfs[rows][columns]==0)
-                        {
-                            allShelfs[rows][columns]=bookToBeAllotted.bookID;
-                            shelfAllotted++;
-                            return true;
-                        }
+                        bookToBeAllotted.bookLocation = "GODOWN";
                     }
                 }
-        return false;
-        
     }
     
     public static void assignShelf()
@@ -180,15 +75,7 @@ public abstract class Shelf extends Rules{
             {
                 if((bookCopy.bookLocation.equals("")))
                 {
-               boolean shelfAllotted = Shelf.setBookShelf(bookCopy);
-               if(shelfAllotted==false)
-               {
-                   bookCopy.bookLocation="GODOWN";
-                   garage.add(bookCopy.bookID);
-               }
-               else{
-                   bookCopy.bookLocation="SHELF";
-               }    
+                Shelf.callSetShelfWRTGenre(bookCopy);
                }
             }
         }
@@ -197,9 +84,9 @@ public abstract class Shelf extends Rules{
     public static String getBookPosition(int bookID)
     {
         
-                for(int rows=0;rows<12;rows++)
+                for(int rows=0;rows<(TOTALGENRE+1);rows++)
                 {
-                   for(int columns=0;columns<maximumBookInAShelf;columns++) 
+                   for(int columns=0;columns<Rules.maximumBookInAShelf;columns++) 
                    {
                        if(bookID==allShelfs[rows][columns])
                         {
@@ -225,9 +112,9 @@ public abstract class Shelf extends Rules{
     
     public static void removeShelf(int bookNo,int bookID)
     {
-        for(int rows=0;rows<12;rows++)
+        for(int rows=0;rows<(TOTALGENRE+1);rows++)
                 {
-                   for(int columns=0;columns<maximumBookInAShelf;columns++) 
+                   for(int columns=0;columns<Rules.maximumBookInAShelf;columns++) 
                    {
                        if(bookID==allShelfs[rows][columns])
                         {
@@ -245,23 +132,12 @@ public abstract class Shelf extends Rules{
         {
             for(Book bookCopy:book.bookCopies)
             {
-                if((bookCopy.bookNo!=bookNo)&&(((bookCopy.bookLocation.equals("GODOWN"))||(bookCopy.bookLocation.equals("")))))
-                    
+                
+                if((((bookCopy.bookLocation.equals("GODOWN"))||(bookCopy.bookLocation.equals("")))))
                 {
-                    boolean shelfAllotted = Shelf.setBookShelf(bookCopy);
-                    if(shelfAllotted)
+                    Shelf.callSetShelfWRTGenre(bookCopy);
+                    if(bookCopy.bookLocation.equals("SHELF"))
                     {
-                        bookCopy.bookLocation="SHELF";
-                        garage.remove(Integer.valueOf(bookCopy.bookID));
-                    }
-                    
-                }
-                else if((((bookCopy.bookLocation.equals("GODOWN"))||(bookCopy.bookLocation.equals("")))))
-                {
-                    boolean shelfAllotted = Shelf.setBookShelf(bookCopy);
-                    if(shelfAllotted)
-                    {
-                        bookCopy.bookLocation="SHELF";
                         garage.remove(Integer.valueOf(bookCopy.bookID));
                     }
                 }
@@ -271,9 +147,9 @@ public abstract class Shelf extends Rules{
     
     public static void removeCopiesOfBookShelfOnly(int bookID)
     {
-        for(int rows=0;rows<12;rows++)
+        for(int rows=0;rows<(TOTALGENRE+1);rows++)
                 {
-                   for(int columns=0;columns<maximumBookInAShelf;columns++) 
+                   for(int columns=0;columns<Rules.maximumBookInAShelf;columns++) 
                    {
                        if(bookID==allShelfs[rows][columns])
                         {
@@ -292,9 +168,9 @@ public abstract class Shelf extends Rules{
             {
                 for(Book bookCopy:book.bookCopies)
                 {
-                    for(int rows=0;rows<12;rows++)
+                    for(int rows=0;rows<(TOTALGENRE+1);rows++)
                     {
-                     for(int columns=0;columns<maximumBookInAShelf;columns++) 
+                     for(int columns=0;columns<Rules.maximumBookInAShelf;columns++) 
                      {
                        if(bookCopy.bookID==allShelfs[rows][columns])
                         {
@@ -305,6 +181,21 @@ public abstract class Shelf extends Rules{
                 }
             }
         }
+    }
+    
+    public static int setShelf(Book bookToBeAllotted,int shelf,int shelfAllotted)
+    {
+        for(int columns=0;columns<Rules.maximumBookInAShelf;columns++)   
+                    {
+                        if(allShelfs[shelf][columns]==0)
+                        {
+                            allShelfs[shelf][columns]=bookToBeAllotted.bookID;
+                            shelfAllotted++;
+                            bookToBeAllotted.bookLocation="SHELF";
+                            return shelfAllotted;
+                        }
+                    }
+        return shelfAllotted;
     }
     
 }
