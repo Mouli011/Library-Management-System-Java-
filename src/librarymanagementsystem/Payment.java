@@ -8,6 +8,13 @@ import java.util.*;
  *
  * @author mouli011
  */
+
+enum PaymentPlatform
+{
+    NETBANKING,
+    UPI;
+}
+
 public class Payment extends Patron {
     protected static int paymentIDReference = 0;
     protected int paymentID; 
@@ -15,7 +22,7 @@ public class Payment extends Patron {
     protected String paymentPlatform;
     boolean paymentResult;
     protected double paymentAmount;
-    Date currentDate = new Date();
+    static Date currentDate = new Date();
     Date paymentDate;
     static int paymentCount = 0;
     
@@ -35,23 +42,11 @@ public class Payment extends Patron {
         switch(userChoice)
         {
             case NETBANKING:
-                System.out.println("Amount debitted from your bank through netbanking!!");
-                paymentID = setPaymentID();
-                paymentResult = true;
-                paymentPlatform = "NET BANKING";
-                paymentAmount = patron.fine;
-                paymentDate = currentDate;
-                paymentCount++;
+                paymentResult = this.paymentInPaymentPlatform(patron, "NET BANKING");
                 break;
                 
             case UPI:
-                System.out.println("Amount debitted from your bank through UPI!!");  
-                paymentID = this.setPaymentID();
-                paymentResult = true;
-                paymentPlatform = "UPI";
-                paymentAmount = patron.fine;
-                paymentDate = currentDate;
-                paymentCount++;
+                paymentResult = this.paymentInPaymentPlatform(patron, "UPI");
                 break;
                 
             case CANCEL:
@@ -70,26 +65,15 @@ public class Payment extends Patron {
     {
         return paymentIDReference++;
     }
-    public static void viewPayments()
+   
+    public boolean paymentInPaymentPlatform(Patron patron,String message)
     {
-        if(paymentCount!=0)
-        {
-            System.out.println("-----------------------------------------------------------------------------------------------------------------");  
-             System.out.printf("%5s %15s %15s %15s %20s %25s %25s ", "PAYMENT ID", "USER ID","USER NAME",  "AMOUNT PAID", "PAYMENT DATE", "PAYMENT PLATFORM","PAYMENT PURPOSE"  );  
-            System.out.println();  
-            System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
-        //System.out.println("PaymentID\t\tUserID\t\tUsername\t\tAmount Paid\t\tPayment Date\t\tPayment Platform\t\tPayment Purpose");
-        for(Payment payment:Resources.payments)
-        {
-             System.out.printf("%5s %15s %15s %15s %20s %25s %25s ", payment.paymentID, payment.userID,payment.userName,  payment.paymentAmount, Utils.printDate(payment.paymentDate), payment.paymentPlatform,payment.paymentPurpose );  
-            System.out.println();  
-            System.out.println("-----------------------------------------------------------------------------------------------------------------"); 
-            //System.out.println(payment.paymentID+"\t\t"+payment.userID+"\t\t"+payment.userName+"\t\t"+payment.paymentAmount+"\t\t"+Utils.printDate(payment.paymentDate)+"\t\t"+payment.paymentPlatform+"\t\t"+payment.paymentPurpose);
-        }
-        }
-        else
-        {
-            System.out.println("No Payments Done");
-        }
+        System.out.println("Amount debitted from your bank through " + message+"!!!");
+        paymentID = setPaymentID();
+        paymentAmount = patron.fine;
+        paymentCount++;
+        paymentDate = currentDate;
+        paymentPlatform = message;
+        return true;
     }
 }
