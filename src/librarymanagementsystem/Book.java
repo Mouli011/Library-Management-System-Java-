@@ -11,9 +11,49 @@ import java.util.concurrent.TimeUnit;
  * @author mouli011
  */
 
+enum Genre
+{
+    ACTION(1),
+    DRAMA(2),
+    SCIENCEFICTION(3),
+    ROMANCE(4),
+    CRIME(5),
+    THRILLER(6),
+    HORROR(7),
+    DOCUMENTARY(8),
+    NOVEL(9),
+    HISTORY(10),
+    OTHER(11);
+    
+    private int genreValue;
+    
+    Genre(int genreValue)
+    {
+        this.genreValue = genreValue;
+    }
+    
+    int getGenreValue()
+    {
+    return genreValue;
+    }
+    
+    public Genre getGenre(int value)
+    {
+        for(Genre g: Genre.values())
+        {
+            if(g.getGenreValue()==value)
+            return g;
+        }
+        System.out.println("Enter Valid Options!!");
+        value = Utils.getInt();
+        return getGenre(value);
+    }
+}
 
 
-public class Book extends Rules{
+public class Book{
+    
+    Genre genre = Genre.ACTION;
     
     static int bookCount = 0;
     
@@ -29,7 +69,7 @@ public class Book extends Rules{
     String publishedIn;
     int availableCopies;
     int genreReference; 
-    String genre;
+    //String genre;
     boolean isAvailable;
     Date borrowedDate;
     Date toBeReturnedDate;
@@ -62,7 +102,7 @@ public class Book extends Rules{
             System.out.println("Enter Genre: ");
             System.out.println("\t\t1.ACTION\n\t\t2.DRAMA\n\t\t3.SCIENCE FICTION\n\t\t4.ROMANCE\n\t\t5.CRIME\n\t\t6.THRILLER\n\t\t7.HORROR\n\t\t8.DOCUMENTARY\n\t\t9.NOVEL\n\t\t10.HISTORY\n\t\t11.OTHER");
             genreReference = Utils.getInt();
-            genre = Utils.assignGenre(genreReference);
+            genre = genre.getGenre(genreReference);
             System.out.println("Enter Book Price: ");
             bookPrice = Utils.getDouble();
             bookID = bookIDReference;
@@ -82,7 +122,7 @@ public class Book extends Rules{
         return this;
     }
     
-    public void copyContents(int bookNo,String bookName,String author,String publishedIn,double bookPrice,String genre)
+    public void copyContents(int bookNo,String bookName,String author,String publishedIn,double bookPrice,Genre genre)
     {
      this.bookNo=bookNo;
      this.bookName=bookName;
@@ -258,14 +298,14 @@ public class Book extends Rules{
         book.bookID=-1;
         return book;
     }*/
-    public Book assignBookCopy(int bookID)
+    public Book assignBookCopy(int bookID,Patron patron)
     {
         int bookMatch=0;
         for(Book book:Resources.books)
         {
         for(Book bookCopy:book.bookCopies)
         {
-            if((bookCopy.bookID==bookID))
+            if((bookCopy.bookID==bookID)&&(!(bookCopy.bookLocation.contains("G"))))
             {
                 bookMatch++;
                 if(bookCopy.isAvailable==true)
@@ -283,6 +323,34 @@ public class Book extends Rules{
                      System.out.println("Sorry!!No Books Available!!");
                 }
             }
+            else if((bookCopy.bookID==bookID)&&((bookCopy.bookLocation.contains("G"))))
+            {
+                if(patron.booksOnHoldCount<=1)
+                {
+                System.out.println("Waiting For Librarian's Response!!");
+                patron.booksOnHold.add(bookCopy);
+                bookCopy.isAvailable = false;
+                book.availableCopies--;
+                book.borrowedCopies++;
+                bookCopy.bookLocation="HOLD"; 
+                patron.booksOnHoldCount++;
+                patron.previousBooksOnHoldCount++;
+                Book returnBook = new Book();
+                Resources.totalBooksOnHoldByAllPatrons++;
+                returnBook.bookID = -1;
+                return returnBook;
+                }
+                else
+                {
+                    System.out.println("Book Hold List Full!!");
+                    Book returnBook = new Book();
+                    returnBook.bookID = -1;
+                    return returnBook;
+                }
+                
+                //Admin.borrowBookRequest(patron);
+                
+            }
         }
         }
         if(bookMatch==0)
@@ -290,7 +358,7 @@ public class Book extends Rules{
             System.out.println("Enter Valid Book ID: ");
             bookID = Utils.getInt();
             Book addedBook = new Book();
-            addedBook=addedBook.assignBookCopy(bookID);
+            addedBook=addedBook.assignBookCopy(bookID,patron);
             return addedBook;
         }
         Book book = new Book();
@@ -308,7 +376,7 @@ public class Book extends Rules{
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(borrowedDate);
         
-        calendar.add(Calendar.DATE,returnDateLimit);
+        calendar.add(Calendar.DATE,Rules.returnDateLimit);
         
         toBeReturnedDate = calendar.getTime();
        
@@ -335,7 +403,7 @@ public class Book extends Rules{
         double fineCalculated;
         if(diffInDays>0)
         {
-            fineCalculated = diffInDays * 10;    
+            fineCalculated = diffInDays * Rules.fineFee;    
         }
         else
         {
@@ -353,7 +421,7 @@ public class Book extends Rules{
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(toBeReturnedDate);
         
-        calendar.add(Calendar.DATE,noOfRenewalDate);
+        calendar.add(Calendar.DATE,Rules.noOfRenewalDate);
         
         toBeReturnedDate = calendar.getTime();
         }
@@ -361,224 +429,13 @@ public class Book extends Rules{
             Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
         
-        calendar.add(Calendar.DATE,noOfRenewalDate);
+        calendar.add(Calendar.DATE,Rules.noOfRenewalDate);
         
         toBeReturnedDate = calendar.getTime();
         
         }
     }
-    public void deleteBook()
-    {
-        int deleteCount = 0;
-        int userChoice = 1;
-        int confirm;
- 
-        while(LibraryManagementSystem.toBoolean(userChoice))
-        {
-            if(bookCount!=0)
-        {
-        Book book = new Book();
-        book.viewBooks();
-       
-        System.out.println("\n\nEnter Option\n\t\t1.View copies of the book\n\t\t2.Delete a Whole Book \n\t\t0.Main Page");
-        userChoice = Utils.getInt();
-        while((userChoice!=0)&&(userChoice!=1)&&(userChoice!=2))
-        {
-            System.out.println("Enter Valid Option!!");
-            userChoice = Utils.getInt();
-        }
-        if(userChoice==1)
-        {
-            book.viewBookCopies();
-            
-        }
-        else if((userChoice!=0)&&(userChoice!=1)&&(userChoice!=2)){
-            System.out.println("Enter Valid Option!!!");
-            new Book().viewBooks();
-        }
-        else if(userChoice==0)
-        {
-            break;
-        }
-        if(userChoice==2)
-        {
-            System.out.println("Enter the Book Number To Be Deleted From The Above List: ");
-            int bookNo;
-            int bookMatch =0;
-            bookNo = Utils.getInt();
-            System.out.println("Confirm Deletion:\n\t\t1.Yes\n\t\t0.No");
-            confirm = Utils.getInt();
-            while((confirm!=0)&&(confirm!=1))
-            {
-                  System.out.println("Enter Valid Option: ");
-                  confirm = Utils.getInt();
-            }
-            if(confirm==0)
-            {
-                    System.out.println("Book Not Deleted!!");
-                    userChoice =0;
-                    continue;
-            }
-            if(confirm==1)
-            {   
-            Book bookToBeDeleted = new Book();
-            for(Book singleBook:Resources.books)
-            {
-                if((singleBook.bookNo==bookNo)&&(singleBook.availableCopies==singleBook.totalCopies))
-                {
-                    bookToBeDeleted = singleBook;
-                    deleteCount++;
-                    bookMatch++;
-                    Shelf.removeBookShelfOnly(bookNo);
-                }
-                if((singleBook.bookNo==bookNo)&&(singleBook.availableCopies!=singleBook.totalCopies))
-                {
-                    System.out.println("Book with Book No: "+bookNo+" Is Not Eligible for Deletion!!");
-                    bookMatch++;
-                }
-            }
-            boolean bookDeleteResult=Resources.books.remove(bookToBeDeleted);
-            if(bookDeleteResult)
-            {
-                System.out.println("Book with Number: "+bookNo+" is Deleted Successfully!!!");
-                Book.bookCount--;
-                Shelf.reassignShelf(-1);
-            }
-            if(bookMatch==0)
-            {
-                System.out.println("Enter Valid Book Number!!\n\n");
-                userChoice=1;
-                continue;
-            }
-            if(deleteCount==0)
-            {
-            System.out.println("No Books Deleted!!");
-            deleteCount=0;
-            }
-        }
-            
-        }
-        
-        if(userChoice==1)
-        {
-        int bookID;
-        String bookIDInString;
-        
-        System.out.println("\n\nEnter the ID of the books to be deleted(Press Enter After Each ID's): \nPress Enter after Completion\n");
-        
-        ArrayList<Integer> bookIDList = new ArrayList<Integer>();
-        
-        do
-        {
-            bookIDInString=Utils.getString();
-            if(bookIDInString.isEmpty())
-                break;
-            bookID = Integer.parseInt(bookIDInString);
-            bookIDList.add(bookID);
-        }while(true); 
-        
-        
-        /*for(;;)
-        {
-            bookID = Utils.getInt();
-            if(bookID!=-1)
-            {
-                bookIDList.add(bookID);
-                            
-                
-            }
-            else
-            {
-                break;
-            }
-        }*/
-           System.out.println("Confirm Deletion:\n\t\t1.Yes\n\t\t0.No");
-           confirm = Utils.getInt();
-           while((confirm!=0)&&(confirm!=1))
-            {
-                  System.out.println("Enter Valid Option: ");
-                  confirm = Utils.getInt();
-            }
-            if(confirm==0)
-            {
-                    System.out.println("Book Not Deleted!!");
-                    userChoice =0;
-                    continue;
-            }
-            if(confirm==1)
-            {   
-        for(Book singlebook:Resources.books)
-        {
-            
-            for(Integer ID:bookIDList)
-            {
-                for(Book bookCopy:singlebook.bookCopies)
-                {
-                    if((bookCopy.bookID==ID)&&(singlebook.availableCopies>0)&&(singlebook.totalCopies>0)&&(bookCopy.isAvailable==true))
-                    {
-                        
-                        singlebook.toBeDeletedBooks.add(bookCopy);
-                        --singlebook.availableCopies;
-                        --singlebook.totalCopies;
-                        Shelf.removeCopiesOfBookShelfOnly(bookCopy.bookID);
-                        System.out.println("Book with Book ID: "+ID+" Is Deleted!!");
-                        deleteCount++;
-                       
-                        
-                    }
-                    else if((bookCopy.bookID==ID)&&((singlebook.availableCopies<=0)||(singlebook.totalCopies<=0)||(bookCopy.isAvailable==false)))
-                    {
-                        System.out.println("Book with Book ID: "+ID+" Is Not Eligible for Deletion!!");
-                    }
-                    
-                    
-
-                }
-            }
-        }
-           
-            
-        }
-        for(Book singleBook:Resources.books)
-        {
-  
-            singleBook.bookCopies.removeAll(singleBook.toBeDeletedBooks);
-            
-        }
-        
-        if(deleteCount==0)
-        {
-            System.out.println("No Books Deleted!!");
-            
-        }
-        else if(deleteCount>0)
-        {
-            System.out.println("Number Of Books Deleted: "+deleteCount);
-            deleteCount=0;
-        }       
-        
-        for(Book books:Resources.books)
-        {
-            books.toBeDeletedBooks.removeAll(books.toBeDeletedBooks);
-        }
-        Shelf.reassignShelf(bookNo);
-        }
-        System.out.println("Enter 1.Delete more books");
-        System.out.println("Enter 0.Main Page");
-        System.out.println("Enter appropraite Option: ");
-        userChoice = Utils.getInt();  
-        
-        
-        }
-        
-        else
-        {
-            System.out.println("No Books Available!!Add Some Books");
-            userChoice=0;
-        }
-        }
-        
-    }
+    
     /*public static void displayAddBookOptions()
     {
         if(Book.bookCount==0)
@@ -780,16 +637,19 @@ public class Book extends Rules{
     public static int filterByGenre()
     {
         int bookFound=0;
+        Genre userGenreChoice = Genre.ACTION;
         System.out.println("Select the Appropriate Genre: ");
         System.out.println("\t\t1.ACTION\n\t\t2.DRAMA\n\t\t3.SCIENCE FICTION\n\t\t4.ROMANCE\n\t\t5.CRIME\n\t\t6.THRILLER\n\t\t7.HORROR\n\t\t8.DOCUMENTARY\n\t\t9.NOVEL\n\t\t10.HISTORY\n\t\t11.OTHER");
         System.out.println("Enter Option: ");
         int genreReference = Utils.getInt();
-        String genre = Utils.assignGenre(genreReference);
+        userGenreChoice = userGenreChoice.getGenre(genreReference);
+        //String genre = Utils.assignGenre(genreReference);
         for(Book book:Resources.books)
         {
             for(Book bookCopy:book.bookCopies)
             
-                if(((book.genre.replaceAll("\\s+","").toLowerCase()).contains(genre.replaceAll("\\s+","").toLowerCase()))) 
+                //if(((book.genre.replaceAll("\\s+","").toLowerCase()).contains(genre.replaceAll("\\s+","").toLowerCase()))) 
+                if(book.genre==userGenreChoice)
                 {
                         
                     if(bookFound==0)
