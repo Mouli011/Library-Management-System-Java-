@@ -1,4 +1,18 @@
-{
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
+package librarymanagementsystem;
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.util.regex.*;
+
+/**
+ *
+ * @author mouli011
+ */
+public abstract class Utils {
 
     private static final Scanner scanner = new Scanner(System.in);
     private static final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
