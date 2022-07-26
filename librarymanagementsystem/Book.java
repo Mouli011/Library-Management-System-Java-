@@ -215,19 +215,38 @@ public class Book {
     }
 
     public Book assignBookCopy(int bookID, Patron patron) {
+
+        final int YES = 1;
+        final int NO = 0;
+
         int bookMatch = 0;
         for (Book book : Resources.books) {
             for (Book bookCopy : book.bookCopies) {
                 if ((bookCopy.bookID == bookID) && (!(bookCopy.bookLocation.contains("G")))) {
                     bookMatch++;
                     if (bookCopy.isAvailable == true) {
-                        bookCopy.isAvailable = false;
-                        bookCopy.setDateLimit();
-                        book.availableCopies--;
-                        bookCopy.bookLocation = "BORROWED";
-                        book.borrowedCopies++;
-                        Shelf.removeBookFromShelf(book.bookNo, bookCopy.bookID);
-                        return bookCopy;
+
+                        System.out.println("\nConfirm\n\t\t1.YES\n\t\t0.NO\n\n");
+                        int userChoice = Utils.getInt();
+                        while ((userChoice != YES) && (userChoice != NO)) {
+                            System.out.println("Enter Valid Option:\n\n");
+                            userChoice = Utils.getInt();
+                        }
+                        if (userChoice == NO) {
+                            System.out.println("Book Not Borrowed!!\n\n");
+                            Book returnBook = new Book();
+                            returnBook.bookID = -1;
+                            return returnBook;
+                        } else if (userChoice == YES) {
+
+                            bookCopy.isAvailable = false;
+                            bookCopy.setDateLimit();
+                            book.availableCopies--;
+                            bookCopy.bookLocation = "BORROWED";
+                            book.borrowedCopies++;
+                            Shelf.removeBookFromShelf(book.bookNo, bookCopy.bookID);
+                            return bookCopy;
+                        }
                     } else {
                         System.out.println("Sorry!!No Books Available!!");
                     }
@@ -267,9 +286,9 @@ public class Book {
 
     public void setDateLimit() {
 
-        System.out.println("Enter the date you Borrow the Book(dd-MM-yyyy)");
-        String dateInput = Utils.getString();
-        borrowedDate = Utils.parseDate(dateInput);
+        //System.out.println("Enter the date you Borrow the Book(dd-MM-yyyy)");
+        //String dateInput = Utils.getString();
+        borrowedDate = Resources.currentDate;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(borrowedDate);
         calendar.add(Calendar.DATE, Rules.returnDateLimit);
