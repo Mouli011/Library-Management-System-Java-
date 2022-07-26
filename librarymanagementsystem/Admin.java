@@ -439,7 +439,7 @@ public class Admin extends User
     public static void bookApproveOption() {
         if (Resources.totalBooksOnHoldByAllPatrons != 0) {
             Admin.viewBorrowBookRequest();
-            System.out.println("\n\nEnter the ID of the books to be Approved(Press Enter After Each ID's): PRESS ENTER AFTER COMPLETION\n");
+            System.out.println("\n\nEnter the BookID to be Approved(Press Enter After Each ID's): PRESS ENTER AFTER COMPLETION\n");
             ArrayList<Integer> bookIDList = getBookIDList();
             approveBorrowRequest(bookIDList);
         } else {
@@ -450,7 +450,7 @@ public class Admin extends User
     public static void approveBorrowRequest(ArrayList<Integer> bookIDList) {
         final int EXIT = 0;
         int userChoice = 1;
-        while (userChoice != EXIT) {
+        while (true) {
             int bookMatch = 0;
             for (Patron patron : Resources.patrons) {
                 for (Book bookOnHold : patron.booksOnHold) {
@@ -484,6 +484,7 @@ public class Admin extends User
                 bookIDList = getBookIDList();
                 bookIDList.add(userChoice);
                 approveBorrowRequest(bookIDList);
+                break;
             } else if (!bookIDList.isEmpty()) {
                 for (Integer bookID : bookIDList) {
                     System.out.println("Invalid Book ID: " + bookID);
