@@ -458,7 +458,7 @@ public class Book {
         int nearestBookID;
         Genre userGenreChoice = Genre.ACTION;
         System.out.println("Select the Appropriate Genre: ");
-        System.out.println("\t\t1.ACTION\n\t\t2.DRAMA\n\t\t3.SCIENCE FICTION\n\t\t4.ROMANCE\n\t\t5.CRIME\n\t\t6.THRILLER\n\t\t7.HORROR\n\t\t8.DOCUMENTARY\n\t\t9.NOVEL\n\t\t10.HISTORY\n\t\t11.OTHER");
+        new Book().printGenre();
         System.out.println("Enter Option: ");
         int genreReference = Utils.getInt();
         userGenreChoice = new Book().getGenre(genreReference);
@@ -575,43 +575,3 @@ public class Book {
         }
     }
 }
-
-/*public static Book assignBook(int bookNo,ArrayList<Book> borrowedBooks)
-    {
-        int bookMatch=0;
-        if(bookCount!=0)
-        {
-        for(Book book:Resources.books)
-        {
-            if((book.bookNo==bookNo)&&(book.availableCopies!=0))
-            {
-                bookMatch++;
-                Book addedBook = new Book();
-                addedBook=book.assignBookCopy(borrowedBooks);
-                if(addedBook.bookID>=0)
-                {
-                    book.availableCopies--;
-                    return addedBook;
-                }
-                else{
-                    System.out.println("No Books Available");
-                }
-            }
-        }
-        }
-        else
-        {
-            System.out.println("Sorry!!No Books Available!!");
-        }
-        if(bookMatch==0)
-        {
-            System.out.println("Enter Valid Book Number:");
-            bookNo = Utils.getInt();
-            Book addedBook = new Book();
-            addedBook=Book.assignBook(bookNo,borrowedBooks);
-            return addedBook;
-        }
-        Book book = new Book();
-        book.bookID=-1;
-        return book;
-    }*/
