@@ -1,17 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
-package librarymanagementsystem;
-import java.io.*;
-import java.util.*;
-import java.text.*;
-
-/**
- *
- * @author mouli011
- */
-public abstract class Utils {
+{
 
     private static final Scanner scanner = new Scanner(System.in);
     private static final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -62,29 +49,6 @@ public abstract class Utils {
             value = Utils.getNotNull(value);
         }
         return value;
-    }
-
-    public static String checkNGetValidMailID(String value) {
-        int aliasCount = 0;
-        int index = 0;
-        int length = value.length();
-        while (index < length) {
-            if (value.charAt(index) == '@') {
-                aliasCount++;
-            }
-            index++;
-        }
-
-        if ((aliasCount == 1) && (value.charAt(length - 4) == '.')) {
-            return value;
-        }
-        return getMailID(value);
-    }
-
-    public static String getMailID(String value) {
-        System.out.println("Enter Valid MailID:");
-        value = Utils.getString();
-        return Utils.checkNGetValidMailID(value);
     }
 
     public static String checkNGetValidPhoneNumber(String value) {
@@ -245,6 +209,21 @@ public abstract class Utils {
         System.out.println("Enter Valid Year(yyyy)!!");
         value = Utils.getString();
         return Utils.checkNGetValidYear(value);
+    }
+
+    public static String checkNGetValidMailID(String value) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
+        Matcher matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            return value;
+        }
+        return getMailID(value);
+    }
+
+    public static String getMailID(String value) {
+        System.out.println("Enter Valid MailID:");
+        value = Utils.getString();
+        return Utils.checkNGetValidMailID(value);
     }
 
 }
