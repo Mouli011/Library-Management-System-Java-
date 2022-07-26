@@ -226,7 +226,7 @@ public abstract class Utils {
     }
 
     public static String checkNGetValidMailID(String value) {
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9-]+\\.[[a-zA-Z0-9-]+\\.]*[a-zA-Z0-9-]+$");
         Matcher matcher = pattern.matcher(value);
         if (matcher.matches()) {
             return value;
