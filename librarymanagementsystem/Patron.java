@@ -734,7 +734,11 @@ public class Patron extends User{
 
     public static void borrowRequestApproved(Patron patron) {
 
+        final int BORROW = 1;
+        final int MAINPAGE = 0;
+
         ArrayList<Book> booksToRemoveFromApprovedList = new ArrayList<>();
+        int confirmBorrow;
 
         whileLoop:
         while (true) {
@@ -750,21 +754,37 @@ public class Patron extends User{
                                 System.out.println();
                                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
                                 bookCopy.displaySingleBookCopy();
-                                bookCopy.setDateLimit();
-                                bookCopy.bookLocation = "BORROWED";
-                                Book bookToAdd = new Book();
-                                bookToAdd.copyBookInfoToBorrowedBook(bookCopy);
-                                patron.borrowedBooks.add(bookToAdd);
-                                booksToRemoveFromApprovedList.add(bookCopy);
-                                System.out.println("\n\n---------BOOK BORROWED SUCCESSFULLY------\n\n");
-                                patron.displayBorrowedBooks();
-                                System.out.println("\n\n");
-                                for (Book borrowedBook : patron.borrowedBooks) {
-                                    patron.fine = patron.checkFine(borrowedBook.bookID);
+
+                                System.out.println("Enter 1 To Borrow The Book Or 0 To Go To Main Page\n\n\t-------NOTE: IF YOU PROCEED TO MAIN PAGE YOUR REQUESTED BOOKS WILL BE REMOVED FROM YOUR APPROVED LIST-------");
+                                confirmBorrow = Utils.getInt();
+                                while ((confirmBorrow != BORROW) && (confirmBorrow != MAINPAGE)) {
+                                    System.out.println("Enter Valid Option!!\n");
+                                    confirmBorrow = Utils.getInt();
+                                }
+                                if (confirmBorrow == MAINPAGE) {
+                                    Patron.deleteApprovedBooks(patron);
+                                    Shelf.allotLocationForBooks();
+                                    System.out.println("Requested Books Removed From Approved List");
+                                    break whileLoop;
+                                } else if (confirmBorrow == BORROW) {
+
+                                    bookCopy.setDateLimit();
+                                    bookCopy.bookLocation = "BORROWED";
+                                    Book bookToAdd = new Book();
+                                    bookToAdd.copyBookInfoToBorrowedBook(bookCopy);
+                                    patron.borrowedBooks.add(bookToAdd);
+                                    booksToRemoveFromApprovedList.add(bookCopy);
+                                    System.out.println("\n\n---------BOOK BORROWED SUCCESSFULLY------\n\n");
+                                    patron.displayBorrowedBooks();
+                                    System.out.println("\n\n");
+                                    for (Book borrowedBook : patron.borrowedBooks) {
+                                        patron.fine = patron.checkFine(borrowedBook.bookID);
+
+                                    }
+                                    patron.bookCount++;
+                                    break approvedBookLoop;
 
                                 }
-                                patron.bookCount++;
-                                break approvedBookLoop;
 
                             }
                         }
@@ -790,7 +810,7 @@ public class Patron extends User{
                         }
                     }
                 }
-                System.out.println("Return Books To Borrow Your Approved Books!!!\n\t\tEnter 1.To Return Books\n\t\t 0.To Main Page\n\t-------NOTE: IF YOU PROCEED TO MAIN PAGE YOUR APPROVED BOOKS WILL BE REMOVED FROM YOUR APPROVED LIST-------");
+                System.out.println("Return Books To Borrow Your Approved Books!!!\n\t\tEnter 1.To Return Books\n\t\t 0.To Main Page\n\t-------NOTE: IF YOU PROCEED TO MAIN PAGE YOUR REQUESTED BOOKS WILL BE REMOVED FROM YOUR APPROVED LIST-------");
                 int userChoice = Utils.getInt();
                 while ((userChoice != 1) && (userChoice != 0)) {
                     System.out.println("Enter Valid Options: ");
